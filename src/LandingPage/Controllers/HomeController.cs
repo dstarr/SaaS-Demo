@@ -22,6 +22,8 @@ namespace src.Controllers
 
         public IActionResult Index()
         {
+            string userName = this.User.Identity.Name;
+
             return View();
         }
 
