@@ -1,6 +1,4 @@
-using System;
-
-namespace src.Models
+namespace LandingPage.Models
 {
     public class ErrorViewModel
     {

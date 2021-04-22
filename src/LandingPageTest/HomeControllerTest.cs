@@ -1,33 +1,40 @@
 using Xunit;
-using src.Controllers;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading;
-using System.Security.Principal;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using LandingPage.Controllers;
+using Microsoft.Extensions.Configuration;
+using Moq;
 
 namespace LandingPageTest
 {
     public class HomeControllerTest
     {
-        HomeController _controller;
+        readonly HomeController _controller;
         ControllerContext _controllerContext;
+        readonly IConfiguration _configuration;
 
-        public HomeControllerTest()
+        public HomeControllerTest(IConfiguration configuration)
         {
-            _controller = new HomeController(new NullLogger<HomeController>());
+            _configuration = configuration;
 
-            _controllerContext = _controller.ControllerContext = new ControllerContext
+            Mock _mockConfig = new Mock<IConfiguration>();
+
+
+            _controller = new HomeController(new NullLogger<HomeController>(), _configuration);
+
+            var context = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name, "username")
-                    }, "someAuthTypeName"))
-                }
+                HttpContext = new DefaultHttpContext()
             };
+            
+            context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Name, "username")
+            }, "someAuthTypeName"));
+
+            _controllerContext = _controller.ControllerContext = context;
         }
 
 
