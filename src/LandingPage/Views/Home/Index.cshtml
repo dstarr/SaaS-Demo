@@ -1,8 +1,26 @@
-﻿@{
+﻿@model LandingPage.ViewModels.Home.IndexViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Configure your new service!</h1>
-    <p><a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    
+    <table class="main-table">
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in @Model.UserClaims)
+            {
+                <tr><td class="main-td">Claim</td><td>@claim.Value</td></tr>
+            }
+
+
+        </tbody>
+    </table>"
+
+
 </div>

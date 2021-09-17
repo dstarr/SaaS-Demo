@@ -41,7 +41,7 @@ namespace LandingPageTest
         [Fact]
         public void Index()
         {
-            IActionResult result = _controller.Index();
+            IActionResult result = _controller.IndexAsync();
 
             Assert.NotNull(result);
         }

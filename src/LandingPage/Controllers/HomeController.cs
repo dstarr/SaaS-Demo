@@ -1,35 +1,44 @@
-﻿using System.Diagnostics;
-using Azure.Identity;
-using LandingPage.Models;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
+using LandingPage.ViewModels;
+using LandingPage.ViewModels.Home;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Marketplace.SaaS;
+using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web;
 
 namespace LandingPage.Controllers
 {
     [Authorize]
+    //[Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _config;
-        private MarketplaceSaaSClient _marketplaceClient;
+        //private MarketplaceSaaSClient _marketplaceClient;
 
         public HomeController(ILogger<HomeController> logger, IConfiguration config)
         {
             _logger = logger;
             _config = config;
-
-            _marketplaceClient = new MarketplaceSaaSClient(new ClientSecretCredential(_config["TenantId"],
-                _config["ClientId"], _config["clientSecret"]));
         }
 
         public IActionResult Index()
         {
-            var userName = User.Identity.Name;
+            IndexViewModel model = new IndexViewModel()
+            {
+                UserClaims = this.User.Claims,
+                
+            };
 
-            return View();
+            return View(model);
         }
 
         public IActionResult Privacy()
