@@ -3,34 +3,40 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
+@if(ViewBag.Message != null)
+{
+    <h2>@ViewBag.Message</h2>
+}
+else
+{
+    <div class="text-center">
     
-    <table class="main-table">
-        <thead>
-        <tr>
-            <th>Item</th>
-            <th>Value</th>
-        </tr>
-        </thead>
-        <tbody>
-            <tr><td colspan="2"><b>Claims Values</b></td></tr>
+        <table class="main-table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="2"><b>Claims Values</b></td></tr>
 
-            @foreach (var claim in @Model.UserClaims)
-            {
-                <tr><td class="main-td"></td><td>@claim.Value</td></tr>
-            }
+                @foreach (var claim in @Model.UserClaims)
+                {
+                    <tr><td class="main-td"></td><td>@claim.Value</td></tr>
+                }
             
-            <tr><td colspan="2"><b>Graph Values</b></td></tr>
+                <tr><td colspan="2"><b>Graph Values</b></td></tr>
 
-            <tr><td class="main-td">Given Name</td><td>@Model.GivenName</td></tr>
-            <tr><td class="main-td">Last Name</td><td>@Model.Surname</td></tr>
-            <tr><td class="main-td">Display Name</td><td>@Model.DisplayName</td></tr>
-            <tr><td class="main-td">Mail</td><td>@Model.Mail</td></tr>
-            <tr><td class="main-td">Department</td><td>@Model.Department</td></tr>
-            <tr><td class="main-td">Job Title</td><td>@Model.JobTitle</td></tr>
+                <tr><td class="main-td">Given Name</td><td>@Model.GivenName</td></tr>
+                <tr><td class="main-td">Last Name</td><td>@Model.Surname</td></tr>
+                <tr><td class="main-td">Display Name</td><td>@Model.DisplayName</td></tr>
+                <tr><td class="main-td">Mail</td><td>@Model.Mail</td></tr>
+                <tr><td class="main-td">Job Title</td><td>@Model.JobTitle</td></tr>
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
 
 </div>
+}

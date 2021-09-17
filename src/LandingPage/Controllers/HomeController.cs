@@ -11,36 +11,46 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
+using Microsoft.Marketplace.SaaS;
 
 namespace LandingPage.Controllers
 {
-    //[Authorize]
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IConfiguration _config;
+        private readonly IMarketplaceSaaSClient _marketplaceSaaSClient;
         private readonly GraphServiceClient _graphServiceClient;
 
         public HomeController(
             ILogger<HomeController> logger, 
-            IConfiguration config,
+            IMarketplaceSaaSClient marketplaceSaaSClient,
             GraphServiceClient graphServiceClient)
         {
             _logger = logger;
-            _config = config;
+            _marketplaceSaaSClient = marketplaceSaaSClient;
             _graphServiceClient = graphServiceClient;
         }
 
         [AuthorizeForScopes(Scopes = new string[] { "user.read" })]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string token, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrEmpty(token))
+            {
+                this.ModelState.AddModelError(string.Empty, "Token URL parameter cannot be empty");
+                this.ViewBag.Message = "Token URL parameter cannot be empty";
+                return this.View();
+            }
+
+            var resolvedSubscription = _marketplaceSaaSClient.Fulfillment.Resolve(token, cancellationToken: cancellationToken);
+
+            // get graph data
             var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
 
-            IndexViewModel model = new IndexViewModel()
+            // build the model
+            var model = new IndexViewModel()
             {
                 UserClaims = this.User.Claims,
                 
@@ -48,7 +58,6 @@ namespace LandingPage.Controllers
                 GivenName = graphApiUser.GivenName,
                 Surname = graphApiUser.Surname,
                 Mail = graphApiUser.Mail,
-                Department = graphApiUser.Department,
                 JobTitle = graphApiUser.JobTitle
             };
 
