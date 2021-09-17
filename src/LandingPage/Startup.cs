@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using System.Threading.Tasks;
 
 namespace LandingPage
 {
@@ -23,8 +24,25 @@ namespace LandingPage
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"));
+            //services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+            //    .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"));
+
+            services.AddMicrosoftIdentityWebAppAuthentication(this.Configuration, "AzureAd") // Sign on with AAD
+                    .EnableTokenAcquisitionToCallDownstreamApi(new string[] { "user.read" }) // Call Graph API
+                    .AddMicrosoftGraph() // Use defaults with Graph V1
+                    .AddInMemoryTokenCaches(); // Add token caching
+
+
+            services.Configure<OpenIdConnectOptions>(options =>
+            {
+                options.Events.OnSignedOutCallbackRedirect = (context) =>
+                {
+                    context.Response.Redirect("/");
+                    context.HandleResponse();
+
+                    return Task.CompletedTask;
+                };
+            });
 
             services.AddControllersWithViews(options =>
             {

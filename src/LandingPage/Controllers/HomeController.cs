@@ -12,30 +12,44 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Graph;
 using Microsoft.Identity.Web;
 
 namespace LandingPage.Controllers
 {
-    [Authorize]
-    //[Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
+    //[Authorize]
+    [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _config;
-        //private MarketplaceSaaSClient _marketplaceClient;
+        private readonly GraphServiceClient _graphServiceClient;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration config)
+        public HomeController(
+            ILogger<HomeController> logger, 
+            IConfiguration config,
+            GraphServiceClient graphServiceClient)
         {
             _logger = logger;
             _config = config;
+            _graphServiceClient = graphServiceClient;
         }
 
-        public IActionResult Index()
+        [AuthorizeForScopes(Scopes = new string[] { "user.read" })]
+        public async Task<IActionResult> Index()
         {
+            var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
+
             IndexViewModel model = new IndexViewModel()
             {
                 UserClaims = this.User.Claims,
                 
+                DisplayName = graphApiUser.DisplayName,
+                GivenName = graphApiUser.GivenName,
+                Surname = graphApiUser.Surname,
+                Mail = graphApiUser.Mail,
+                Department = graphApiUser.Department,
+                JobTitle = graphApiUser.JobTitle
             };
 
             return View(model);

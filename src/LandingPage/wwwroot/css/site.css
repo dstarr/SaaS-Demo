@@ -7,6 +7,7 @@ for details on configuring this project to bundle and minify static web assets. 
 
 .main-td {
     padding-right: 20px;
+    min-width: 200px;
 }
 
 a.navbar-brand {
