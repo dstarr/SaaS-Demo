@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Marketplace.SaaS.Models;
+using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace LandingPage.ViewModels.Home
@@ -9,6 +10,7 @@ namespace LandingPage.ViewModels.Home
 
         public GraphValuesViewModel GraphValues {  get; internal set; }
 
-        public SubscriptionValuesViewModel SubscriptionValues {  get; internal set; }
+        public Subscription Subscription { get; internal set; }
+        public string PurchaseIdToken { get; internal set; }
     }
 }

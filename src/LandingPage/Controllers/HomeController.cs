@@ -44,14 +44,16 @@ namespace LandingPage.Controllers
                 return this.View();
             }
 
+            // resolve the subscription using the marketplace purchase id token
             var resolvedSubscription = _marketplaceSaaSClient.Fulfillment.Resolve(token, cancellationToken: cancellationToken).Value;
 
             // get graph data
             var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
-
+            
             // build the model
             var model = new IndexViewModel()
             {
+                PurchaseIdToken = token,
                 UserClaims = this.User.Claims,
                 GraphValues = new GraphValuesViewModel
                 {
@@ -59,21 +61,10 @@ namespace LandingPage.Controllers
                     GivenName = graphApiUser.GivenName,
                     Surname = graphApiUser.Surname,
                     Mail = graphApiUser.Mail,
-                    JobTitle = graphApiUser.JobTitle
+                    JobTitle = graphApiUser.JobTitle                    
                 },
-                SubscriptionValues= new SubscriptionValuesViewModel
-                {
-                    Name1 = resolvedSubscription.SubscriptionName,
-                    Name2 = resolvedSubscription.Subscription.Name,
-                    Quantity = resolvedSubscription.Subscription.Quantity,
-
-
-                }
-                
-                
+                Subscription = resolvedSubscription.Subscription,
             };
-
-            
 
             return View(model);
         }
