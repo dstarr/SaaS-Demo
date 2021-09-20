@@ -10,6 +10,13 @@ for details on configuring this project to bundle and minify static web assets. 
     min-width: 200px;
 }
 
+.main-content {
+    word-wrap:anywhere;
+    max-width: 700px;
+    width:700px;
+}
+
+
 a.navbar-brand {
     white-space: normal;
     text-align: center;
