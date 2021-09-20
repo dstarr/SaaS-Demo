@@ -44,7 +44,7 @@ namespace LandingPage.Controllers
                 return this.View();
             }
 
-            var resolvedSubscription = _marketplaceSaaSClient.Fulfillment.Resolve(token, cancellationToken: cancellationToken);
+            var resolvedSubscription = _marketplaceSaaSClient.Fulfillment.Resolve(token, cancellationToken: cancellationToken).Value;
 
             // get graph data
             var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
@@ -53,13 +53,27 @@ namespace LandingPage.Controllers
             var model = new IndexViewModel()
             {
                 UserClaims = this.User.Claims,
+                GraphValues = new GraphValuesViewModel
+                {
+                    DisplayName = graphApiUser.DisplayName,
+                    GivenName = graphApiUser.GivenName,
+                    Surname = graphApiUser.Surname,
+                    Mail = graphApiUser.Mail,
+                    JobTitle = graphApiUser.JobTitle
+                },
+                SubscriptionValues= new SubscriptionValuesViewModel
+                {
+                    Name1 = resolvedSubscription.SubscriptionName,
+                    Name2 = resolvedSubscription.Subscription.Name,
+                    Quantity = resolvedSubscription.Subscription.Quantity,
+
+
+                }
                 
-                DisplayName = graphApiUser.DisplayName,
-                GivenName = graphApiUser.GivenName,
-                Surname = graphApiUser.Surname,
-                Mail = graphApiUser.Mail,
-                JobTitle = graphApiUser.JobTitle
+                
             };
+
+            
 
             return View(model);
         }

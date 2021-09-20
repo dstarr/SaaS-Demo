@@ -27,12 +27,18 @@ else
                 }
             
                 <tr><td colspan="2"><b>Graph Values</b></td></tr>
+                <tr><td class="main-td">Given Name</td><td>@Model.GraphValues.GivenName</td></tr>
+                <tr><td class="main-td">Last Name</td><td>@Model.GraphValues.Surname</td></tr>
+                <tr><td class="main-td">Display Name</td><td>@Model.GraphValues.DisplayName</td></tr>
+                <tr><td class="main-td">Mail</td><td>@Model.GraphValues.Mail</td></tr>
+                <tr><td class="main-td">Job Title</td><td>@Model.GraphValues.JobTitle</td></tr>
 
-                <tr><td class="main-td">Given Name</td><td>@Model.GivenName</td></tr>
-                <tr><td class="main-td">Last Name</td><td>@Model.Surname</td></tr>
-                <tr><td class="main-td">Display Name</td><td>@Model.DisplayName</td></tr>
-                <tr><td class="main-td">Mail</td><td>@Model.Mail</td></tr>
-                <tr><td class="main-td">Job Title</td><td>@Model.JobTitle</td></tr>
+                <tr><td colspan="2"><b>Subscription Values</b></td></tr>
+                <tr><td class="main-td">Name 1</td><td>@Model.SubscriptionValues.Name1</td></tr>
+                <tr><td class="main-td">Name 2</td><td>@Model.SubscriptionValues.Name2</td></tr>
+                <tr><td class="main-td">Quantity</td><td>@Model.SubscriptionValues.Quantity</td></tr>
+
+
 
             </tbody>
         </table>

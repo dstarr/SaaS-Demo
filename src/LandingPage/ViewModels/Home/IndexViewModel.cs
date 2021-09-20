@@ -7,11 +7,8 @@ namespace LandingPage.ViewModels.Home
     {
         public IEnumerable<Claim> UserClaims { get; internal set; }
 
-        public string Department { get; internal set; }
-        public string DisplayName { get; internal set; }
-        public string GivenName { get; internal set; }
-        public string JobTitle { get; internal set; }
-        public string Mail { get; internal set; }
-        public string Surname { get; internal set; }
+        public GraphValuesViewModel GraphValues {  get; internal set; }
+
+        public SubscriptionValuesViewModel SubscriptionValues {  get; internal set; }
     }
 }
