@@ -11,29 +11,35 @@ else
 {
     <div class="main-content text-center">
     
+
+        <h3>Claims Values</h3>
         <table class="main-table">
-            <thead>
-            <tr>
-                <th>Item</th>
-                <th>Value</th>
-            </tr>
-            </thead>
+            <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
 
-                <tr><td colspan="2"><b>Claims Values</b></td></tr>
                 @foreach (var claim in Model.UserClaims)
                 {
                     <tr><td class="main-td">@claim.Type</td><td>@claim.Value</td></tr>
                 }
-            
-                <tr><td colspan="2"><b>Graph Values</b></td></tr>
+            </tbody>
+        </table>
+
+        <h3>Graph Values</h3>
+        <table class="main-table">
+            <thead><tr><th>Item</th><th>Value</th></tr></thead>
+            <tbody>
                 <tr><td class="main-td">Given Name</td><td>@Model.GraphValues.GivenName</td></tr>
                 <tr><td class="main-td">Last Name</td><td>@Model.GraphValues.Surname</td></tr>
                 <tr><td class="main-td">Display Name</td><td>@Model.GraphValues.DisplayName</td></tr>
                 <tr><td class="main-td">Mail</td><td>@Model.GraphValues.Mail</td></tr>
                 <tr><td class="main-td">Job Title</td><td>@Model.GraphValues.JobTitle</td></tr>
+            </tbody>
+        </table>
 
-                <tr><td colspan="2"><b>Subscription Values</b></td></tr>
+        <h3>Subscription Values</h3>
+        <table class="main-table">
+            <thead><tr><th>Item</th><th>Value</th></tr></thead>
+            <tbody>
                 <tr><td class="main-td">AutoRenew</td><td>@Model.Subscription.AutoRenew</td></tr>
                 <tr><td class="main-td">Beneficiary.EmailId</td><td>@Model.Subscription.Beneficiary.EmailId</td></tr>
                 <tr><td class="main-td">Beneficiary.Puid</td><td>@Model.Subscription.Beneficiary.Puid</td></tr>
@@ -54,17 +60,54 @@ else
                 <tr><td class="main-td">StoreFront</td><td>@Model.Subscription.StoreFront</td></tr>
                 <tr><td class="main-td">Term End Date</td><td>@Model.Subscription.Term.EndDate</td></tr>
                 <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate</td></tr>
-                
-                <tr><td class="main-td">AllowedCustomerOperations</td><td>
-                        @foreach(var operation in Model.Subscription.AllowedCustomerOperations)
-                        {
-                            operation.ToString(); <br/>
-                        }
-                    </td></tr>
-                <tr><td colspan="2"><b>Marketplace Purchase Id Token</b></td></tr>
-                <tr><td colspan="2">@Model.PurchaseIdToken</td></tr>
             </tbody>
         </table>
+                
+        <h3>Allowed Customer Operations</h3>
+        <ul style="text-align: left;">
+        @foreach(var operation in Model.Subscription.AllowedCustomerOperations)
+        {
+            <li>@operation</li>
+        }
+        </ul>
+        
+        <h3>Subscription Plans</h3>
+        <table class="main-table">
+            <thead><tr><th>Item</th><th>Value</th></tr></thead>
+            <tbody>
+@*                @foreach(var plan in Model.SubscriptionPlans.Plans)
+                {
+                    <tr><td colspan="2">@plan.DisplayName</td></tr>
+                    <tr><td class="main-td">Description</td><td>@plan.Description</td></tr>
+                    <tr><td class="main-td">PlanId</td><td>@plan.PlanId</td></tr>
+                }
+*@            </tbody>
+        </table>
+
+        <h3>Pending Operations</h3>
+        <table class="main-table">
+            <thead><tr><th>Item</th><th>Value</th></tr></thead>
+            <tbody>
+                
+                @foreach(var operation in Model.OperationList.Operations)
+                {
+                    <tr><td colspan="2"><b>Operation: @operation.Id</b></td></tr>
+                    <tr><td class="main-td"></td><td>@operation.TimeStamp</td></tr>
+                    <tr><td class="main-td"></td><td>@operation.Quantity</td></tr>
+                    <tr><td class="main-td"></td><td>@operation.Action.Value</td></tr>
+                    <tr><td class="main-td"></td><td>@operation.ActivityId</td></tr>
+                    <tr><td class="main-td"></td><td>@operation.OfferId</td></tr>
+                    <tr><td class="main-td"></td><td>@operation.PlanId</td></tr>
+                    <tr><td class="main-td"></td><td>@operation.PublisherId</td></tr>
+                    <tr><td class="main-td"></td><td>@operation.Status.Value</td></tr>
+                    <tr><td class="main-td"></td><td>@operation.SubscriptionId.Value</td></tr>
+                }
+            </tbody>
+        </table>
+
+        <h3>Marketplace Purchase Id Token</h3>
+        @Model.PurchaseIdToken
+
 
 
 </div>

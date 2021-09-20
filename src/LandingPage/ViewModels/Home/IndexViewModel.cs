@@ -10,7 +10,12 @@ namespace LandingPage.ViewModels.Home
 
         public GraphValuesViewModel GraphValues {  get; internal set; }
 
-        public Subscription Subscription { get; internal set; }
+                public Subscription Subscription { get; internal set; }
+        
         public string PurchaseIdToken { get; internal set; }
+        
+        public OperationList OperationList { get; internal set; }
+        
+        public SubscriptionPlans SubscriptionPlans { get; internal set; }
     }
 }

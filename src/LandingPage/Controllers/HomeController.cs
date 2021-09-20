@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using LandingPage.ViewModels;
@@ -9,11 +6,11 @@ using LandingPage.ViewModels.Home;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using Microsoft.Marketplace.SaaS;
+using Microsoft.Marketplace.SaaS.Models;
 
 namespace LandingPage.Controllers
 {
@@ -45,7 +42,11 @@ namespace LandingPage.Controllers
             }
 
             // resolve the subscription using the marketplace purchase id token
-            var resolvedSubscription = _marketplaceSaaSClient.Fulfillment.Resolve(token, cancellationToken: cancellationToken).Value;
+            var resolvedSubscription = (await _marketplaceSaaSClient.Fulfillment.ResolveAsync(token, cancellationToken: cancellationToken)).Value;
+            //var subscriptionPlans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
+            var operationList = (await _marketplaceSaaSClient.Operations.ListOperationsAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
+
+
 
             // get graph data
             var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
@@ -64,6 +65,8 @@ namespace LandingPage.Controllers
                     JobTitle = graphApiUser.JobTitle                    
                 },
                 Subscription = resolvedSubscription.Subscription,
+                OperationList = operationList,
+                //SubscriptionPlans = subscriptionPlans
             };
 
             return View(model);
