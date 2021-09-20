@@ -21,9 +21,9 @@ else
             <tbody>
 
                 <tr><td colspan="2"><b>Claims Values</b></td></tr>
-                @foreach (var claim in @Model.UserClaims)
+                @foreach (var claim in Model.UserClaims)
                 {
-                    <tr><td class="main-td"></td><td>@claim.Value</td></tr>
+                    <tr><td class="main-td">@claim.Type</td><td>@claim.Value</td></tr>
                 }
             
                 <tr><td colspan="2"><b>Graph Values</b></td></tr>
@@ -52,8 +52,8 @@ else
                 <tr><td class="main-td">SessionId</td><td>@Model.Subscription.SessionId</td></tr>
                 <tr><td class="main-td">SessionMode</td><td>@Model.Subscription.SessionMode.Value</td></tr>
                 <tr><td class="main-td">StoreFront</td><td>@Model.Subscription.StoreFront</td></tr>
-                <tr><td class="main-td">Term End Date</td><td>@Model.Subscription.Term.EndDate.ToString()</td></tr>
-                <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate.ToString()</td></tr>
+                <tr><td class="main-td">Term End Date</td><td>@Model.Subscription.Term.EndDate</td></tr>
+                <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate</td></tr>
                 
                 <tr><td class="main-td">AllowedCustomerOperations</td><td>
                         @foreach(var operation in Model.Subscription.AllowedCustomerOperations)
@@ -63,9 +63,6 @@ else
                     </td></tr>
                 <tr><td colspan="2"><b>Marketplace Purchase Id Token</b></td></tr>
                 <tr><td colspan="2">@Model.PurchaseIdToken</td></tr>
-                
-
-
             </tbody>
         </table>
 
