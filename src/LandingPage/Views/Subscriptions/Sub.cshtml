@@ -13,18 +13,17 @@ else
 
 
         <h3>Manage Subscription</h3>
-        <h3>@Model.Id</h3>
-
-@*        <table class="main-table">
+        
+        <table class="main-table">
             <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
-                @foreach (var subscription in Model.Subscriptions)
-                {
-                    <tr><td>Name</td><td>@subscription.Name</td></tr>
-                    <tr><td>SaasSubscriptionStatus</td><td>@subscription.SaasSubscriptionStatus.Value</td></tr>
-                }
+                <tr><td>Name</td><td>@Model.Subscription.Name</td></tr>
+                <tr><td>SaasSubscriptionStatus</td><td>@Model.Subscription.SaasSubscriptionStatus.Value</td></tr>
+                
+
+
             </tbody>
-        </table>*@
+        </table>
 
 
 

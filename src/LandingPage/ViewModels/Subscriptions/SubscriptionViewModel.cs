@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.Marketplace.SaaS.Models;
+using System;
 
 namespace LandingPage.ViewModels.Subscriptions
 {
     public class SubscriptionViewModel
     {
-        public Guid Id {  get; set; }
+        public Subscription Subscription {  get; internal set; }
     }
 }

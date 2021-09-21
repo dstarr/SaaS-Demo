@@ -48,11 +48,11 @@ namespace LandingPage
 
                 public async Task<IActionResult> SubAsync(Guid id, CancellationToken cancellationToken)
         {
-            //var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(subscriptionId, cancellationToken: cancellationToken)).Value;
+            var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(id, cancellationToken: cancellationToken)).Value;
 
             var model = new SubscriptionViewModel()
             {
-                Id = id
+                Subscription = subscription
             };
 
             return View(model);
