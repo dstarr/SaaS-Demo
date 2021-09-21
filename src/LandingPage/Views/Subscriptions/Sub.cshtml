@@ -1,0 +1,32 @@
+﻿@model LandingPage.ViewModels.Subscriptions.SubscriptionViewModel
+@{
+    ViewData["Title"] = "Subscriptions Management Page";
+}
+
+@if (ViewBag.Message != null)
+{
+    <h2>@ViewBag.Message</h2>
+}
+else
+{
+    <div class="main-content text-center">
+
+
+        <h3>Manage Subscription</h3>
+        <h3>@Model.Id</h3>
+
+@*        <table class="main-table">
+            <thead><tr><th>Item</th><th>Value</th></tr></thead>
+            <tbody>
+                @foreach (var subscription in Model.Subscriptions)
+                {
+                    <tr><td>Name</td><td>@subscription.Name</td></tr>
+                    <tr><td>SaasSubscriptionStatus</td><td>@subscription.SaasSubscriptionStatus.Value</td></tr>
+                }
+            </tbody>
+        </table>*@
+
+
+
+    </div>
+}
