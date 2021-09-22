@@ -68,20 +68,20 @@ namespace LandingPage
             
             _ = await _marketplaceSaaSClient.Fulfillment.ActivateSubscriptionAsync(id, subscriberPlan, cancellationToken: cancellationToken);
 
-            return this.RedirectToAction(nameof(this.SubAsync), new { id = id });
+            return this.RedirectToAction("Sub", new { id = id });
 
         }
 
         public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            _ = await _marketplaceSaaSClient.Fulfillment.DeleteSubscriptionAsync(id, cancellationToken: cancellationToken);
-            
+            try { 
+                _ = await _marketplaceSaaSClient.Fulfillment.DeleteSubscriptionAsync(id, cancellationToken: cancellationToken);
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
             
             return this.RedirectToAction("Index", cancellationToken);
-
         }
-
-
-
     }
 }

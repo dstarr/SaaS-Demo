@@ -10,13 +10,14 @@
 }
 else
 {
-    <div class="main-content text-center">
+    <div class="main-content">
 
         <h3>Manage Subscription</h3>
-        <table class="main-table">
-            <thead><tr><th>Item</th><th>Value</th></tr></thead>
-            <tbody>
-                <h3>Subscription Values</h3>
+
+        <a href="/Subscriptions">Back to all subscriptions</a>
+
+        <h3>Subscription Values</h3>
+            
                 <table class="main-table">
                     <thead><tr><th>Item</th><th>Value</th></tr></thead>
                     <tbody>
@@ -56,16 +57,20 @@ else
                         
                         var link = $"/Subscriptions/Activate/{Model.Subscription.Id}/{Model.Subscription.PlanId}";
                         
-                        <li><a href="@link">Active this subscription</a></li>
+                        <li><a href="@link">Activate this subscription</a></li>
                     }
-                    <li>
-                        @Html.ActionLink("Delete this subscription", "Delete", "Subscriptions", new { id = Model.Subscription.Id })
-                    </li>
+                    
+                    @if (Model.Subscription.SaasSubscriptionStatus == SubscriptionStatusEnum.Subscribed){
+                        <li>
+                            @Html.ActionLink("Delete (Unsubscribe) this subscription", "Delete", "Subscriptions", new { id = Model.Subscription.Id })
+                        </li>
+                    }
+                    
+                    
+                    
 
                 </ul>
 
 
-            </tbody>
-        </table>
     </div>
 }
