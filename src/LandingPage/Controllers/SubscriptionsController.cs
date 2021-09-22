@@ -46,7 +46,7 @@ namespace LandingPage
             return View(model);
         }
 
-                public async Task<IActionResult> SubAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> SubAsync(Guid id, CancellationToken cancellationToken)
         {
             var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(id, cancellationToken: cancellationToken)).Value;
 
@@ -57,5 +57,31 @@ namespace LandingPage
 
             return View(model);
         }
+
+        [Route("Subscriptions/Activate/{id}/{planId}")]
+        public async Task<IActionResult> ActivateAsync(Guid id, string planId, CancellationToken cancellationToken)
+        {
+            SubscriberPlan subscriberPlan = new SubscriberPlan()
+            {
+                PlanId= planId,
+            };
+            
+            _ = await _marketplaceSaaSClient.Fulfillment.ActivateSubscriptionAsync(id, subscriberPlan, cancellationToken: cancellationToken);
+
+            return this.RedirectToAction(nameof(this.SubAsync), new { id = id });
+
+        }
+
+        public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            _ = await _marketplaceSaaSClient.Fulfillment.DeleteSubscriptionAsync(id, cancellationToken: cancellationToken);
+            
+            
+            return this.RedirectToAction("Index", cancellationToken);
+
+        }
+
+
+
     }
 }

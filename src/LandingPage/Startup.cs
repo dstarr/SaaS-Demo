@@ -83,9 +83,15 @@ namespace LandingPage
 
             app.UseEndpoints(endpoints =>
             {
+                
+                endpoints.MapControllerRoute(
+                    name: "asctivate",
+                    pattern: "{controller=Subcriptions}/{action=Activate}/{id}/{planId}");
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                
                 endpoints.MapRazorPages();
             });
         }
@@ -104,8 +110,6 @@ namespace LandingPage
             {
                 return new MarketplaceSaaSClient(creds);
             });
-
-            //services.TryAddScoped<IMarketplaceProcessor, MarketplaceProcessor>();
         }
 
 

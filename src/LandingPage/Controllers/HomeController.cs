@@ -32,7 +32,7 @@ namespace LandingPage.Controllers
         }
 
         [AuthorizeForScopes(Scopes = new string[] { "user.read" })]
-        public async Task<IActionResult> Index(string token, CancellationToken cancellationToken)
+        public async Task<IActionResult> IndexAsync(string token, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(token))
             {
