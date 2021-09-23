@@ -30,6 +30,11 @@ jobs:
     needs: build
     runs-on: windows-latest
     defaults: 
-      run: src
+      run: 
+        working-directory: src
+    steps:
+    - uses: actions/deploy
+    - name: Deploy to Azure
+    
 
 
