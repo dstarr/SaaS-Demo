@@ -1,18 +1,17 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using LandingPage.ViewModels.Subscriptions;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Marketplace.SaaS;
-using System.Threading;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Marketplace.SaaS.Models;
-using System.Collections.Generic;
-using System;
 
-namespace LandingPage
+namespace LandingPage.Controllers
 {
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
     public class SubscriptionsController : Controller
@@ -28,6 +27,7 @@ namespace LandingPage
             this._marketplaceSaaSClient = marketplaceSaaSClient;
         }
 
+        // shows a list of all subscriptions
         public async Task<IActionResult> IndexAsync(CancellationToken cancellationToken)
         {
             IList<Subscription> subscriptionsList = new List<Subscription>();
@@ -46,6 +46,7 @@ namespace LandingPage
             return View(model);
         }
 
+        // shows subscription details
         public async Task<IActionResult> SubAsync(Guid id, CancellationToken cancellationToken)
         {
             var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(id, cancellationToken: cancellationToken)).Value;
@@ -58,6 +59,7 @@ namespace LandingPage
             return View(model);
         }
 
+        // this action will mark the subscription State as Subscribed
         [Route("Subscriptions/Activate/{id}/{planId}")]
         public async Task<IActionResult> ActivateAsync(Guid id, string planId, CancellationToken cancellationToken)
         {
@@ -72,6 +74,8 @@ namespace LandingPage
 
         }
 
+        
+        // this action will mark the subscription State as Unsubscribed
         public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
             try { 
@@ -81,7 +85,7 @@ namespace LandingPage
                 _logger.LogError(ex.Message);
             }
             
-            return this.RedirectToAction("Index", cancellationToken);
+            return this.RedirectToAction("Sub", new { id = id });
         }
     }
 }

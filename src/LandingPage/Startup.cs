@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using Microsoft.Marketplace.Metering;
 using Microsoft.Marketplace.SaaS;
 using System.Threading.Tasks;
 

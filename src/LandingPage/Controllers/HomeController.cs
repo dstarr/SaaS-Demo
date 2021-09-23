@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using Microsoft.Marketplace.SaaS;
-using Microsoft.Marketplace.SaaS.Models;
 
 namespace LandingPage.Controllers
 {
@@ -46,9 +45,7 @@ namespace LandingPage.Controllers
             //var subscriptionPlans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
             var operationList = (await _marketplaceSaaSClient.Operations.ListOperationsAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
 
-
-
-            // get graph data
+            // get graph current user data
             var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
             
             // build the model
