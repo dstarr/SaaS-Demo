@@ -36,7 +36,7 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
-
+          
   deploy:
     runs-on: windows-latest
     needs: build
@@ -55,6 +55,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'saasdemo-as'
-          slot-name: 'Production'
+          # slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4734B5BEB2A54200983F44BC4C954792 }}
           package: .
