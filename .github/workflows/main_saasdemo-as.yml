@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0'
-          include-prerelease: false
+          include-prerelease: true
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
@@ -55,6 +55,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'saasdemo-as'
-          # slot-name: 'Production'
+          slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4734B5BEB2A54200983F44BC4C954792 }}
           package: .
