@@ -6,6 +6,10 @@ h3 {
     padding-top:50px;
 }
 
+.plan-table-div {
+    padding-top: 30px;
+}
+
 .main-table {
     text-align: left;
 }
@@ -14,10 +18,11 @@ h3 {
     padding-right: 20px;
     min-width: 200px;
     word-wrap:break-word;
+    vertical-align: top;
 }
 
 .main-content {
-    word-wrap:anywhere;
+    word-wrap: anywhere;
     max-width: 1080px;
     width:1080px;
 }

@@ -42,14 +42,41 @@ else
             </tbody>
         </table>
 
-        <h3>Allowed Customer Operations</h3>
-        <ul style="text-align: left;">
+        <h3>Plans for this Subscription</h3>
 
-            @foreach (var operation in Model.Subscription.AllowedCustomerOperations)
-            {
-                <li>@operation</li>
-            }
-        </ul>
+        @foreach (var plan in Model.Plans)
+        {
+            <div class="plan-table-div">
+                <b>@plan.DisplayName</b>
+
+                @if (plan.PlanId == Model.Subscription.PlanId)
+                {
+                    <span>- Current Plan</span>
+                }
+                else if (Model.Subscription.SaasSubscriptionStatus.Value != SubscriptionStatusEnum.Unsubscribed)
+                {
+                    var routeValues = new
+                    {
+                        subscriptionId = Model.Subscription.Id,
+                        planId = plan.PlanId
+                    };
+                    @Html.ActionLink("- Update to this plan", "Update", routeValues)
+                }
+
+                <table class="main-table">
+                    <tbody>
+                    <tr><td class="main-td">DisplayName</td><td>@plan.DisplayName</td></tr>
+                    <tr><td class="main-td">Description</td><td>@plan.Description</td></tr>
+                    <tr><td class="main-td">HasFreeTrials</td><td>@plan.HasFreeTrials</td></tr>
+                    <tr><td class="main-td">IsPricePerSeat</td><td>@plan.IsPricePerSeat</td></tr>
+                    <tr><td class="main-td">IsPrivate</td><td>@plan.IsPrivate</td></tr>
+                    <tr><td class="main-td">IsStopSell</td><td>@plan.IsStopSell</td></tr>
+                    <tr><td class="main-td">Market</td><td>@plan.Market</td></tr>
+                    <tr><td class="main-td">PlanId</td><td>@plan.PlanId</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        }
 
         <h3>Publisher Actions</h3>
         <ul style="text-align: left;">
@@ -59,7 +86,7 @@ else
 
                 <li>@Html.ActionLink("Activate this subscription", "Activate", routeValues)</li>
             }
-            
+
             @if (Model.Subscription.SaasSubscriptionStatus != SubscriptionStatusEnum.Unsubscribed)
             {
 

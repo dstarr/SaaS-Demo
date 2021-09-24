@@ -75,7 +75,7 @@ namespace LandingPage.Controllers
             {
                 
                 Subscription = subscription,
-                Plans = plans
+                Plans = plans.Plans
             };
 
             return View(model);
@@ -108,6 +108,11 @@ namespace LandingPage.Controllers
             }
             
             return this.RedirectToAction("Subscription", new { id = id });
+        }
+
+        public IActionResult Update(Guid subscriptionid, string planId, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }
