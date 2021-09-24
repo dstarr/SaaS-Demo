@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using LandingPage.ViewModels.Subscriptions;
+using LandingPage.ViewModels.Publisher;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +14,13 @@ using Microsoft.Marketplace.SaaS.Models;
 namespace LandingPage.Controllers
 {
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
-    public class SubscriptionsController : Controller
+    public class PublisherController : Controller
     {
-        private readonly ILogger<SubscriptionsController> _logger;
+        private readonly ILogger<PublisherController> _logger;
         private readonly IMarketplaceSaaSClient _marketplaceSaaSClient;
 
-        public SubscriptionsController(
-            ILogger<SubscriptionsController> logger,
+        public PublisherController(
+            ILogger<PublisherController> logger,
             IMarketplaceSaaSClient marketplaceSaaSClient)
         {
             this._logger = logger;
@@ -47,7 +47,7 @@ namespace LandingPage.Controllers
         }
 
         // shows subscription details
-        public async Task<IActionResult> SubAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> SubscriptionAsync(Guid id, CancellationToken cancellationToken)
         {
             var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(id, cancellationToken: cancellationToken)).Value;
 
@@ -60,7 +60,7 @@ namespace LandingPage.Controllers
         }
 
         // this action will mark the subscription State as Subscribed
-        [Route("Subscriptions/Activate/{id}/{planId}")]
+        [Route("/Publisher/Activate/{id}/{planId}")]
         public async Task<IActionResult> ActivateAsync(Guid id, string planId, CancellationToken cancellationToken)
         {
             SubscriberPlan subscriberPlan = new SubscriberPlan()
@@ -70,7 +70,7 @@ namespace LandingPage.Controllers
             
             _ = await _marketplaceSaaSClient.Fulfillment.ActivateSubscriptionAsync(id, subscriberPlan, cancellationToken: cancellationToken);
 
-            return this.RedirectToAction("Sub", new { id = id });
+            return this.RedirectToAction("Subscription", new { id = id });
 
         }
 
@@ -85,7 +85,7 @@ namespace LandingPage.Controllers
                 _logger.LogError(ex.Message);
             }
             
-            return this.RedirectToAction("Sub", new { id = id });
+            return this.RedirectToAction("Subscription", new { id = id });
         }
     }
 }

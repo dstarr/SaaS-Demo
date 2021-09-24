@@ -1,5 +1,5 @@
 ﻿@using Microsoft.Marketplace.SaaS.Models
-@model LandingPage.ViewModels.Subscriptions.SubscriptionViewModel
+@model LandingPage.ViewModels.Publisher.SubscriptionViewModel
 @{
     ViewData["Title"] = "Subscriptions Management Page";
 }
@@ -14,7 +14,7 @@ else
 
         <h3>Manage Subscription</h3>
 
-        <a href="/Subscriptions">Back to all subscriptions</a>
+        @Html.ActionLink("Back to all subscriptions", "Index")
 
         <h3>Subscription Values</h3>
 
@@ -55,16 +55,24 @@ else
         <ul style="text-align: left;">
             @if (Model.Subscription.SaasSubscriptionStatus == SubscriptionStatusEnum.PendingFulfillmentStart)
             {
+                var routeValues = new { id = Model.Subscription.Id, planId = Model.Subscription.PlanId };
 
-                var link = $"/Subscriptions/Activate/{Model.Subscription.Id}/{Model.Subscription.PlanId}";
+                <li>@Html.ActionLink("Activate this subscription", "Activate", routeValues)</li>
+            }
+            
+            @if (Model.Subscription.SaasSubscriptionStatus != SubscriptionStatusEnum.Unsubscribed)
+            {
 
-                <li><a href="@link">Activate this subscription</a></li>
+                var routeValues = new { id = Model.Subscription.Id, planId = Model.Subscription.PlanId };
+
+                <li>Update this subscription</li>
+
             }
 
             @if (Model.Subscription.SaasSubscriptionStatus == SubscriptionStatusEnum.Subscribed)
             {
                 <li>
-                    @Html.ActionLink("Delete (Unsubscribe) this subscription", "Delete", "Subscriptions", new { id = Model.Subscription.Id })
+                    @Html.ActionLink("Delete (Unsubscribe) this subscription", "Delete", "Publisher", new { id = Model.Subscription.Id })
                 </li>
             }
         </ul>

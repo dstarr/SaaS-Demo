@@ -84,8 +84,8 @@ namespace LandingPage
             {
                 
                 endpoints.MapControllerRoute(
-                    name: "asctivate",
-                    pattern: "{controller=Subcriptions}/{action=Activate}/{id}/{planId}");
+                    name: "activate_update",
+                    pattern: "{controller=Partner}/{action=Activate}/{id}/{planId}");
 
                 endpoints.MapControllerRoute(
                     name: "default",

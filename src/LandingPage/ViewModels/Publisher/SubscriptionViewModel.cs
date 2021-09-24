@@ -1,7 +1,6 @@
 ﻿using Microsoft.Marketplace.SaaS.Models;
-using System;
 
-namespace LandingPage.ViewModels.Subscriptions
+namespace LandingPage.ViewModels.Publisher
 {
     public class SubscriptionViewModel
     {

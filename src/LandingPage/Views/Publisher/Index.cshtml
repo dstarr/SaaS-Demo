@@ -1,4 +1,4 @@
-﻿@model LandingPage.ViewModels.Subscriptions.IndexViewModel
+﻿@model LandingPage.ViewModels.Publisher.IndexViewModel
 @{
     ViewData["Title"] = "Subscriptions Management Page";
 }
@@ -12,15 +12,16 @@ else
     <div class="main-content text-center">
 
         <h3>Manage All Subscriptions</h3>
-        
-          <table class="main-table">
-            <thead><tr><th>Subscription Name</th><th>Purchaser Email</th><th>Status</th></tr></thead>
+
+        <table class="main-table">
+            <thead><tr><th>Subscription Name</th><th>Offer ID</th><th>Plan ID</th><th>Status</th></tr></thead>
             <tbody>
                 @foreach (var subscription in Model.Subscriptions)
                 {
                     <tr>
-                        <td class="main-td">@Html.ActionLink(@subscription.Name, "Sub", new { id = @subscription.Id })</td>
-                        <td class="main-td">@subscription.Purchaser.EmailId</td>
+                        <td class="main-td">@Html.ActionLink(@subscription.Name, "Subscription", new { id = @subscription.Id })</td>
+                        <td class="main-td">@subscription.OfferId</td>
+                        <td class="main-td">@subscription.PlanId</td>
                         <td>@subscription.SaasSubscriptionStatus.Value</td>
                     </tr>
                 }
