@@ -8,6 +8,7 @@ using LandingPage.ViewModels.Publisher;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Marketplace.SaaS;
 using Microsoft.Marketplace.SaaS.Models;
@@ -110,9 +111,16 @@ namespace LandingPage.Controllers
             return this.RedirectToAction("Subscription", new { id = id });
         }
 
-        public IActionResult Update(Guid subscriptionid, string planId, CancellationToken cancellationToken)
+        public IActionResult Update(Guid subscriptionId, string planId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var subscriberPlan = new SubscriberPlan()
+            {
+                PlanId = planId,
+            };
+
+            string operationId = this._marketplaceSaaSClient.Fulfillment.UpdateSubscription(subscriptionId, subscriberPlan, cancellationToken: cancellationToken);
+
+            return this.RedirectToAction(nameof(Subscription), new { id = subscriptionId });
         }
     }
 }

@@ -53,7 +53,7 @@ else
                 {
                     <span>- Current Plan</span>
                 }
-                else if (Model.Subscription.SaasSubscriptionStatus.Value != SubscriptionStatusEnum.Unsubscribed)
+                else if (Model.Subscription.SaasSubscriptionStatus.Value == SubscriptionStatusEnum.Subscribed)
                 {
                     var routeValues = new
                     {
@@ -66,7 +66,7 @@ else
                 <table class="main-table">
                     <tbody>
                     <tr><td class="main-td">DisplayName</td><td>@plan.DisplayName</td></tr>
-                    <tr><td class="main-td">Description</td><td>@plan.Description</td></tr>
+                    <tr><td class="main-td">Description</td><td>@Html.Raw(plan.Description)</td></tr>
                     <tr><td class="main-td">HasFreeTrials</td><td>@plan.HasFreeTrials</td></tr>
                     <tr><td class="main-td">IsPricePerSeat</td><td>@plan.IsPricePerSeat</td></tr>
                     <tr><td class="main-td">IsPrivate</td><td>@plan.IsPrivate</td></tr>
@@ -85,15 +85,6 @@ else
                 var routeValues = new { id = Model.Subscription.Id, planId = Model.Subscription.PlanId };
 
                 <li>@Html.ActionLink("Activate this subscription", "Activate", routeValues)</li>
-            }
-
-            @if (Model.Subscription.SaasSubscriptionStatus != SubscriptionStatusEnum.Unsubscribed)
-            {
-
-                var routeValues = new { id = Model.Subscription.Id, planId = Model.Subscription.PlanId };
-
-                <li>Update this subscription</li>
-
             }
 
             @if (Model.Subscription.SaasSubscriptionStatus == SubscriptionStatusEnum.Subscribed)
