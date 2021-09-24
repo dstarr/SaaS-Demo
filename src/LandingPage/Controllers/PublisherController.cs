@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using LandingPage.ViewModels;
 using LandingPage.ViewModels.Publisher;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -49,11 +50,32 @@ namespace LandingPage.Controllers
         // shows subscription details
         public async Task<IActionResult> SubscriptionAsync(Guid id, CancellationToken cancellationToken)
         {
-            var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(id, cancellationToken: cancellationToken)).Value;
+
+            Subscription subscription = null;
+            SubscriptionPlans plans = null;
+
+            try
+            {
+                subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(id, cancellationToken: cancellationToken)).Value;
+                plans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(id, cancellationToken: cancellationToken)).Value;
+            }
+            catch (Exception exception)
+            {
+                ErrorViewModel errorViewModel = new ErrorViewModel()
+                {
+                    Description = "Error calling SaaS Fulfillment API",
+                    ExceptionMessage = exception.Message
+                };
+
+                return View("Error", errorViewModel);
+
+            }
 
             var model = new SubscriptionViewModel()
             {
-                Subscription = subscription
+                
+                Subscription = subscription,
+                Plans = plans
             };
 
             return View(model);

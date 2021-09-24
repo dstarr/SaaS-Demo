@@ -7,5 +7,7 @@ namespace LandingPage.ViewModels
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
         public string Description { get; set; }
+
+        public string ExceptionMessage {  get; set; }
     }
 }
