@@ -1,0 +1,24 @@
+﻿@model LandingPage.ViewModels.Publisher.OperationsViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Subscription</h2>
+
+<table class="main-table">
+    <thead><tr><th>Item</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td class="main-td">AutoRenew</td><td>@Model.Subscription.Name</td></tr>
+        <tr><td class="main-td">AutoRenew</td><td>@Model.Subscription.OfferId</td></tr>
+        <tr><td class="main-td">AutoRenew</td><td>@Model.Subscription.PlanId</td></tr>
+        <tr><td class="main-td">AutoRenew</td><td>@Model.Subscription.SaasSubscriptionStatus</td></tr>
+    </tbody>
+</table>
+
+<h2>Oustanding Subscription Operation</h2>
+
+
+<h2>All Oustanding Operations</h2>
+
