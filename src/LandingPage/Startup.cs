@@ -84,8 +84,10 @@ namespace LandingPage
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "update",
+                    pattern: "{controller=Pubisher}/{action=Update}/{subscriptionId:Guid}/{planId}/{operationId:Guid}");
 
-                
                 endpoints.MapControllerRoute(
                     name: "operations",
                     pattern: "{controller=Pubisher}/{action=Operations}/{subscriptionId:Guid}/{operationId:Guid}");

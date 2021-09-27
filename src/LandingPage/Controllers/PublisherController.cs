@@ -119,8 +119,8 @@ namespace LandingPage.Controllers
             return this.RedirectToAction("Subscription", new { id = id });
         }
 
-        [Route("/Update/{SubscriptionId}/{planId}")]
-        public IActionResult Update(Guid subscriptionId, string planId, CancellationToken cancellationToken)
+        [Route("/ChangePlan/{SubscriptionId}/{planId}")]
+        public IActionResult ChangePlan(Guid subscriptionId, string planId, CancellationToken cancellationToken)
         {
             _logger.LogCritical("GOT IT: "+ subscriptionId + " | " + planId);
 
@@ -134,18 +134,17 @@ namespace LandingPage.Controllers
             _logger.LogCritical("OPERATION ID: " + operationId);
 
 
-            // return this.RedirectToAction("Index");
             return this.RedirectToAction("Operations", new { subscriptionId = subscriptionId, operationId = operationId });
         }
 
         [HttpGet]
         [Route("/Operations/{subscriptionId}/{operationId}")]
-        public async Task<IActionResult> Operations(Guid subscriptionId, Guid operationId, CancellationToken cancellationToken)
+        public async Task<IActionResult> OperationsAsync(Guid subscriptionId, Guid operationId, CancellationToken cancellationToken)
         {
             var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(subscriptionId, cancellationToken: cancellationToken)).Value;
             var subscriptionOperations = (await _marketplaceSaaSClient.Operations.ListOperationsAsync(subscriptionId, cancellationToken: cancellationToken)).Value;
             var operationStatus = (await _marketplaceSaaSClient.Operations.GetOperationStatusAsync(subscriptionId, operationId, cancellationToken: cancellationToken)).Value;
-
+            
             var model = new OperationsViewModel()
             {
                 Subscription = subscription,
@@ -153,8 +152,24 @@ namespace LandingPage.Controllers
                 OperationStatus = operationStatus
             };
 
-
             return View(model);
         }
+
+        [HttpGet]
+        [Route("/Update/{subscriptionId:Guid}/{planId}/{operationId:Guid}")]
+        public async Task<IActionResult> UpdateAsync(Guid subscriptionId, string planId, Guid operationId, CancellationToken cancellationToken)
+        {
+            var updateOperation = new UpdateOperation()
+            {
+                PlanId = planId,
+                Status = UpdateOperationStatusEnum.Success
+            };
+
+            // _ = (await _marketplaceSaaSClient.Operations.UpdateOperationStatusAsync(subscriptionId, operationId, updateOperation, cancellationToken: cancellationToken));
+
+            return this.RedirectToAction("Subscription", new { id = subscriptionId } );
+        }
+
+
     }
 }
