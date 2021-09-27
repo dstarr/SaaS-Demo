@@ -12,9 +12,11 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.Marketplace.SaaS;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LandingPage
 {
+    
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -82,11 +84,16 @@ namespace LandingPage
 
             app.UseEndpoints(endpoints =>
             {
+
                 
                 endpoints.MapControllerRoute(
-                    name: "activate_update",
-                    pattern: "{controller=Partner}/{action=Activate}/{id}/{planId}");
+                    name: "operations",
+                    pattern: "{controller=Pubisher}/{action=Operations}/{subscriptionId:Guid}/{operationId:Guid}");
 
+                endpoints.MapControllerRoute(
+                    name: "activate_update",
+                    pattern: "{controller=Pubisher}/{action=Activate}/{id:Guid}/{planId}");
+                
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

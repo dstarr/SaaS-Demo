@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,19 +17,10 @@ using Microsoft.Marketplace.SaaS.Models;
 namespace LandingPage.Controllers
 {
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
+    [Route("/Publisher")]
     public class PublisherController : Controller
     {
-        private readonly ILogger<PublisherController> _logger;
-        private readonly IMarketplaceSaaSClient _marketplaceSaaSClient;
-
-        public PublisherController(
-            ILogger<PublisherController> logger,
-            IMarketplaceSaaSClient marketplaceSaaSClient)
-        {
-            this._logger = logger;
-            this._marketplaceSaaSClient = marketplaceSaaSClient;
-        }
-
+        [Route("/")]
         // shows a list of all subscriptions
         public async Task<IActionResult> IndexAsync(CancellationToken cancellationToken)
         {
@@ -48,7 +40,21 @@ namespace LandingPage.Controllers
             return View(model);
         }
 
+        private readonly ILogger<PublisherController> _logger;
+
+        private readonly IMarketplaceSaaSClient _marketplaceSaaSClient;
+
+        public PublisherController(
+            ILogger<PublisherController> logger,
+            IMarketplaceSaaSClient marketplaceSaaSClient)
+        {
+            this._logger = logger;
+            this._marketplaceSaaSClient = marketplaceSaaSClient;
+        }
+
+
         // shows subscription details
+        [Route("/Suscription/{id}")]
         public async Task<IActionResult> SubscriptionAsync(Guid id, CancellationToken cancellationToken)
         {
 
@@ -83,7 +89,8 @@ namespace LandingPage.Controllers
         }
 
         // this action will mark the subscription State as Subscribed
-        [Route("/Publisher/Activate/{id}/{planId}")]
+        
+        [Route("/Activate/{id}/{planId}")]
         public async Task<IActionResult> ActivateAsync(Guid id, string planId, CancellationToken cancellationToken)
         {
             SubscriberPlan subscriberPlan = new SubscriberPlan()
@@ -99,6 +106,7 @@ namespace LandingPage.Controllers
 
         
         // this action will mark the subscription State as Unsubscribed
+        [Route("/Delete")]
         public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
             try { 
@@ -111,8 +119,11 @@ namespace LandingPage.Controllers
             return this.RedirectToAction("Subscription", new { id = id });
         }
 
+        [Route("/Update/{SubscriptionId}/{planId}")]
         public IActionResult Update(Guid subscriptionId, string planId, CancellationToken cancellationToken)
         {
+            _logger.LogCritical("GOT IT: "+ subscriptionId + " | " + planId);
+
             var subscriberPlan = new SubscriberPlan()
             {
                 PlanId = planId,
@@ -120,7 +131,30 @@ namespace LandingPage.Controllers
 
             string operationId = this._marketplaceSaaSClient.Fulfillment.UpdateSubscription(subscriptionId, subscriberPlan, cancellationToken: cancellationToken);
 
-            return this.RedirectToAction(nameof(Subscription), new { id = subscriptionId });
+            _logger.LogCritical("OPERATION ID: " + operationId);
+
+
+            // return this.RedirectToAction("Index");
+            return this.RedirectToAction("Operations", new { subscriptionId = subscriptionId, operationId = operationId });
+        }
+
+        [HttpGet]
+        [Route("/Operations/{subscriptionId}/{operationId}")]
+        public async Task<IActionResult> Operations(Guid subscriptionId, Guid operationId, CancellationToken cancellationToken)
+        {
+            var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(subscriptionId, cancellationToken: cancellationToken)).Value;
+            var subscriptionOperations = (await _marketplaceSaaSClient.Operations.ListOperationsAsync(subscriptionId, cancellationToken: cancellationToken)).Value;
+            var operationStatus = (await _marketplaceSaaSClient.Operations.GetOperationStatusAsync(subscriptionId, operationId, cancellationToken: cancellationToken)).Value;
+
+            var model = new OperationsViewModel()
+            {
+                Subscription = subscription,
+                SubscriptionOperations = subscriptionOperations.Operations,
+                OperationStatus = operationStatus
+            };
+
+
+            return View(model);
         }
     }
 }
