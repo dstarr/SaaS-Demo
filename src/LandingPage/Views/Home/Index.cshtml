@@ -3,14 +3,14 @@
     ViewData["Title"] = "Home Page";
 }
 
-@if(ViewBag.Message != null)
+@if (ViewBag.Message != null)
 {
     <h2>@ViewBag.Message</h2>
 }
 else
 {
     <div class="main-content text-center">
-    
+
 
         <h3>Claims Values</h3>
         <table class="main-table">
@@ -53,6 +53,9 @@ else
                 <tr><td class="main-td">OfferId</td><td>@Model.Subscription.OfferId</td></tr>
                 <tr><td class="main-td">PlanId</td><td>@Model.Subscription.PlanId</td></tr>
                 <tr><td class="main-td">PublisherId</td><td>@Model.Subscription.PublisherId</td></tr>
+                <tr><td class="main-td">Purchaser.EmailId</td><td>@Model.Subscription.Purchaser.EmailId</td></tr>
+                <tr><td class="main-td">Purchaser.Puid</td><td>@Model.Subscription.Purchaser.Puid</td></tr>
+                <tr><td class="main-td">Purchaser.TenantId</td><td>@Model.Subscription.Purchaser.TenantId</td></tr>
                 <tr><td class="main-td">SaasSubscriptionStatus</td><td>@Model.Subscription.SaasSubscriptionStatus.Value</td></tr>
                 <tr><td class="main-td">SandboxType</td><td>@Model.Subscription.SandboxType.Value</td></tr>
                 <tr><td class="main-td">SessionId</td><td>@Model.Subscription.SessionId</td></tr>
@@ -62,34 +65,34 @@ else
                 <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate</td></tr>
             </tbody>
         </table>
-                
+
         <h3>Allowed Customer Operations</h3>
         <ul style="text-align: left;">
-        @foreach(var operation in Model.Subscription.AllowedCustomerOperations)
-        {
-            <li>@operation</li>
-        }
+            @foreach (var operation in Model.Subscription.AllowedCustomerOperations)
+            {
+                <li>@operation</li>
+            }
         </ul>
-        
+
         <h3>Subscription Plans</h3>
         <table class="main-table">
             <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
-@*                @foreach(var plan in Model.SubscriptionPlans.Plans)
+                @foreach (var plan in Model.SubscriptionPlans.Plans)
                 {
                     <tr><td colspan="2">@plan.DisplayName</td></tr>
-                    <tr><td class="main-td">Description</td><td>@plan.Description</td></tr>
+                    <tr><td class="main-td">Description</td><td>@Html.Raw(plan.Description)</td></tr>
                     <tr><td class="main-td">PlanId</td><td>@plan.PlanId</td></tr>
                 }
-*@            </tbody>
+            </tbody>
         </table>
 
         <h3>Pending Operations</h3>
         <table class="main-table">
             <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
-                
-                @foreach(var operation in Model.OperationList.Operations)
+
+                @foreach (var operation in Model.OperationList.Operations)
                 {
                     <tr><td colspan="2"><b>Operation: @operation.Id</b></td></tr>
                     <tr><td class="main-td"></td><td>@operation.TimeStamp</td></tr>
@@ -106,9 +109,9 @@ else
         </table>
 
         <h3>Marketplace Purchase Id Token</h3>
-        @Model.PurchaseIdToken
-
-
-
-</div>
+        
+        <div style="text-align: left">
+            @Model.PurchaseIdToken
+        </div>
+    </div>
 }
