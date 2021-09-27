@@ -1,11 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using LandingPage.ViewModels;
 using LandingPage.ViewModels.Home;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
@@ -42,7 +44,7 @@ namespace LandingPage.Controllers
 
             // resolve the subscription using the marketplace purchase id token
             var resolvedSubscription = (await _marketplaceSaaSClient.Fulfillment.ResolveAsync(token, cancellationToken: cancellationToken)).Value;
-            //var subscriptionPlans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
+            var subscriptionPlans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
             var operationList = (await _marketplaceSaaSClient.Operations.ListOperationsAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
 
             // get graph current user data
@@ -51,7 +53,7 @@ namespace LandingPage.Controllers
             // build the model
             var model = new IndexViewModel()
             {
-                PurchaseIdToken = token,
+                PurchaseIdToken = HttpUtility.UrlDecode(token),
                 UserClaims = this.User.Claims,
                 GraphValues = new GraphValuesViewModel
                 {
@@ -63,7 +65,7 @@ namespace LandingPage.Controllers
                 },
                 Subscription = resolvedSubscription.Subscription,
                 OperationList = operationList,
-                //SubscriptionPlans = subscriptionPlans
+                SubscriptionPlans = subscriptionPlans
             };
 
             return View(model);
