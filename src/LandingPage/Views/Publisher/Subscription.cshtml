@@ -52,16 +52,20 @@ else
                 @if (plan.PlanId == Model.Subscription.PlanId)
                 {
                     <span>- Current Plan</span>
-                }
+                } 
+                @* 
+                    
+                // This code puts in a link to allow the publisher to change plans. 
+                // It doesn't work right now to do so. The operation fails
                 else if (Model.Subscription.SaasSubscriptionStatus.Value == SubscriptionStatusEnum.Subscribed)
-                {
-                    var routeValues = new
-                    {
-                        subscriptionId = Model.Subscription.Id,
-                        planId = plan.PlanId
-                    };
-                    @Html.ActionLink("- Change to this plan", "ChangePlan", routeValues)
-                }
+                 { 
+                     var routeValues = new 
+                     { 
+                         subscriptionId = Model.Subscription.Id, 
+                         planId = plan.PlanId 
+                     }
+                     @Html.ActionLink("- Change to this plan", "ChangePlan", routeValues)
+                 } *@
 
                 <table class="main-table">
                     <tbody>

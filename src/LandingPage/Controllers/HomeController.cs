@@ -55,14 +55,7 @@ namespace LandingPage.Controllers
             {
                 PurchaseIdToken = HttpUtility.UrlDecode(token),
                 UserClaims = this.User.Claims,
-                GraphValues = new GraphValuesViewModel
-                {
-                    DisplayName = graphApiUser.DisplayName,
-                    GivenName = graphApiUser.GivenName,
-                    Surname = graphApiUser.Surname,
-                    Mail = graphApiUser.Mail,
-                    JobTitle = graphApiUser.JobTitle                    
-                },
+                GraphUser = graphApiUser,
                 Subscription = resolvedSubscription.Subscription,
                 OperationList = operationList,
                 SubscriptionPlans = subscriptionPlans

@@ -1,10 +1,12 @@
-﻿@model LandingPage.ViewModels.Home.IndexViewModel
+﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
+@model LandingPage.ViewModels.Home.IndexViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
 
 @if (ViewBag.Message != null)
 {
+
     <h2>@ViewBag.Message</h2>
 }
 else
@@ -28,11 +30,12 @@ else
         <table class="main-table">
             <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
-                <tr><td class="main-td">Given Name</td><td>@Model.GraphValues.GivenName</td></tr>
-                <tr><td class="main-td">Last Name</td><td>@Model.GraphValues.Surname</td></tr>
-                <tr><td class="main-td">Display Name</td><td>@Model.GraphValues.DisplayName</td></tr>
-                <tr><td class="main-td">Mail</td><td>@Model.GraphValues.Mail</td></tr>
-                <tr><td class="main-td">Job Title</td><td>@Model.GraphValues.JobTitle</td></tr>
+                <tr><td class="main-td">DisplayName</td><td>@Model.GraphUser.DisplayName</td></tr>
+                <tr><td class="main-td">GivenName</td><td>@Model.GraphUser.GivenName</td></tr>
+                <tr><td class="main-td">SurName</td><td>@Model.GraphUser.Surname</td></tr>
+                <tr><td class="main-td">Mail</td><td>@Model.GraphUser.Mail</td></tr>
+                <tr><td class="main-td">JobTitle</td><td>@Model.GraphUser.JobTitle</td></tr>
+
             </tbody>
         </table>
 
@@ -76,40 +79,53 @@ else
 
         <h3>Subscription Plans</h3>
         <table class="main-table">
-            <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
                 @foreach (var plan in Model.SubscriptionPlans.Plans)
                 {
-                    <tr><td colspan="2">@plan.DisplayName</td></tr>
+                    <tr>
+                        <td colspan="2">
+                            <b>@plan.DisplayName</b>
+
+                            @if (@plan.PlanId == Model.Subscription.PlanId)
+                            {
+                                <span>- Current plan</span>
+                            }
+
+
+                        </td>
+                    </tr>
+                    <tr><td class="main-td">DisplayName</td><td>@Html.Raw(plan.DisplayName)</td></tr>
                     <tr><td class="main-td">Description</td><td>@Html.Raw(plan.Description)</td></tr>
                     <tr><td class="main-td">PlanId</td><td>@plan.PlanId</td></tr>
                 }
             </tbody>
         </table>
 
-        <h3>Pending Operations</h3>
-        <table class="main-table">
+        @*
+            <!-- <h3>Pending Operations</h3>
+            <table class="main-table">
             <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
 
-                @foreach (var operation in Model.OperationList.Operations)
-                {
-                    <tr><td colspan="2"><b>Operation: @operation.Id</b></td></tr>
-                    <tr><td class="main-td"></td><td>@operation.TimeStamp</td></tr>
-                    <tr><td class="main-td"></td><td>@operation.Quantity</td></tr>
-                    <tr><td class="main-td"></td><td>@operation.Action.Value</td></tr>
-                    <tr><td class="main-td"></td><td>@operation.ActivityId</td></tr>
-                    <tr><td class="main-td"></td><td>@operation.OfferId</td></tr>
-                    <tr><td class="main-td"></td><td>@operation.PlanId</td></tr>
-                    <tr><td class="main-td"></td><td>@operation.PublisherId</td></tr>
-                    <tr><td class="main-td"></td><td>@operation.Status.Value</td></tr>
-                    <tr><td class="main-td"></td><td>@operation.SubscriptionId.Value</td></tr>
-                }
+            @foreach (var operation in Model.OperationList.Operations)
+            {
+            <tr><td colspan="2"><b>Operation: @operation.Id</b></td></tr>
+            <tr><td class="main-td"></td><td>@operation.TimeStamp</td></tr>
+            <tr><td class="main-td"></td><td>@operation.Quantity</td></tr>
+            <tr><td class="main-td"></td><td>@operation.Action.Value</td></tr>
+            <tr><td class="main-td"></td><td>@operation.ActivityId</td></tr>
+            <tr><td class="main-td"></td><td>@operation.OfferId</td></tr>
+            <tr><td class="main-td"></td><td>@operation.PlanId</td></tr>
+            <tr><td class="main-td"></td><td>@operation.PublisherId</td></tr>
+            <tr><td class="main-td"></td><td>@operation.Status.Value</td></tr>
+            <tr><td class="main-td"></td><td>@operation.SubscriptionId.Value</td></tr>
+            }
             </tbody>
-        </table>
+            </table> -->
+        *@
 
         <h3>Marketplace Purchase Id Token</h3>
-        
+
         <div style="text-align: left">
             @Model.PurchaseIdToken
         </div>

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Marketplace.SaaS.Models;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Microsoft.Graph;
+using Subscription = Microsoft.Marketplace.SaaS.Models.Subscription;
 
 namespace LandingPage.ViewModels.Home
 {
@@ -8,9 +10,9 @@ namespace LandingPage.ViewModels.Home
     {
         public IEnumerable<Claim> UserClaims { get; internal set; }
 
-        public GraphValuesViewModel GraphValues {  get; internal set; }
+        public User GraphUser {  get; internal set; }
 
-                public Subscription Subscription { get; internal set; }
+        public Subscription Subscription { get; internal set; }
         
         public string PurchaseIdToken { get; internal set; }
         
