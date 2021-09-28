@@ -83,20 +83,32 @@ else
         }
 
         <h3>Publisher Actions</h3>
-        <ul style="text-align: left;">
-            @if (Model.Subscription.SaasSubscriptionStatus == SubscriptionStatusEnum.PendingFulfillmentStart)
+            
+            @if (Model.Subscription.SaasSubscriptionStatus != SubscriptionStatusEnum.PendingFulfillmentStart &&
+                 Model.Subscription.SaasSubscriptionStatus != SubscriptionStatusEnum.Subscribed)
             {
-                var routeValues = new { id = Model.Subscription.Id, planId = Model.Subscription.PlanId };
+                <p>
+                    The publisher can take no action with the subscription when state is: @Model.Subscription.SaasSubscriptionStatus.Value
+                </p>
+            }
+            else
+            {
+                <ul style="text-align: left;">
+                    @if (Model.Subscription.SaasSubscriptionStatus == SubscriptionStatusEnum.PendingFulfillmentStart)
+                    {
+                        var routeValues = new { id = Model.Subscription.Id, planId = Model.Subscription.PlanId };
 
-                <li>@Html.ActionLink("Activate this subscription", "Activate", routeValues)</li>
+                        <li>@Html.ActionLink("Activate this subscription", "Activate", routeValues)</li>
+                    }
+
+                    @if (Model.Subscription.SaasSubscriptionStatus == SubscriptionStatusEnum.Subscribed)
+                    {
+                        <li>
+                            @Html.ActionLink("Delete (Unsubscribe) this subscription", "Delete", "Publisher", new { id = Model.Subscription.Id })
+                        </li>
+                    }
+                </ul>
             }
 
-            @if (Model.Subscription.SaasSubscriptionStatus == SubscriptionStatusEnum.Subscribed)
-            {
-                <li>
-                    @Html.ActionLink("Delete (Unsubscribe) this subscription", "Delete", "Publisher", new { id = Model.Subscription.Id })
-                </li>
-            }
-        </ul>
     </div>
 }
