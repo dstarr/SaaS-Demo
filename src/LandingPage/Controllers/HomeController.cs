@@ -7,8 +7,6 @@ using LandingPage.ViewModels.Home;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using Microsoft.Marketplace.SaaS;
@@ -18,20 +16,23 @@ namespace LandingPage.Controllers
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IMarketplaceSaaSClient _marketplaceSaaSClient;
         private readonly GraphServiceClient _graphServiceClient;
 
         public HomeController(
-            ILogger<HomeController> logger, 
             IMarketplaceSaaSClient marketplaceSaaSClient,
             GraphServiceClient graphServiceClient)
         {
-            _logger = logger;
             _marketplaceSaaSClient = marketplaceSaaSClient;
             _graphServiceClient = graphServiceClient;
         }
 
+        /// <summary>
+        /// Shows all information associated with the user, the request, and the subscription.
+        /// </summary>
+        /// <param name="token">THe marketplace purchase ID token</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns></returns>
         [AuthorizeForScopes(Scopes = new string[] { "user.read" })]
         public async Task<IActionResult> IndexAsync(string token, CancellationToken cancellationToken)
         {
@@ -67,13 +68,6 @@ namespace LandingPage.Controllers
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [AllowAnonymous]
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
     }
 }

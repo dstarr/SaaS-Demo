@@ -17,12 +17,21 @@ using Microsoft.Marketplace.SaaS.Models;
 namespace LandingPage.Controllers
 {
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
-    // [Route("/Publisher")]
     [Route("/Publisher")]
     public class PublisherController : Controller
     {
+        private readonly IMarketplaceSaaSClient _marketplaceSaaSClient;
 
-        // shows a list of all subscriptions
+        public PublisherController(IMarketplaceSaaSClient marketplaceSaaSClient)
+        {
+            this._marketplaceSaaSClient = marketplaceSaaSClient;
+        }
+
+        /// <summary>
+        /// Shows a list of all subscriptions
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>IActionResult</returns>
         public async Task<IActionResult> IndexAsync(CancellationToken cancellationToken)
         {
             IList<Subscription> subscriptionsList = new List<Subscription>();
@@ -41,16 +50,6 @@ namespace LandingPage.Controllers
             return View(model);
         }
 
-        private readonly ILogger<PublisherController> _logger;
-        private readonly IMarketplaceSaaSClient _marketplaceSaaSClient;
-
-        public PublisherController(
-            ILogger<PublisherController> logger,
-            IMarketplaceSaaSClient marketplaceSaaSClient)
-        {
-            this._logger = logger;
-            this._marketplaceSaaSClient = marketplaceSaaSClient;
-        }
 
         /// <summary>
         /// Shows subscription details
