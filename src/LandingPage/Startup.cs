@@ -12,11 +12,10 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.Marketplace.SaaS;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace LandingPage
 {
-    
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -29,13 +28,13 @@ namespace LandingPage
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // AAD and Graph integration
+            // Configure AAD and Graph integration
             services.AddMicrosoftIdentityWebAppAuthentication(this.Configuration, "AzureAd") // Sign on with AAD
                     .EnableTokenAcquisitionToCallDownstreamApi(new string[] { "user.read" }) // Call Graph API
                     .AddMicrosoftGraph() // Use defaults with Graph V1
                     .AddInMemoryTokenCaches(); // Add token caching
 
-            // OpenIdConnect setup
+            // Configure OpenIdConnect
             services.Configure<OpenIdConnectOptions>(options =>
             {
                 options.Events.OnSignedOutCallbackRedirect = (context) =>
@@ -71,7 +70,6 @@ namespace LandingPage
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -103,10 +101,12 @@ namespace LandingPage
                 endpoints.MapRazorPages();
             });
         }
+        
 
         private void ConfigureMarketplaceServices(IServiceCollection services)
         {
-            // wire up marketplace client
+            // get needed arguments from the Configuration in appsettings.json
+            // or in the configuration settings in the Web Application
             var tenantId = Configuration["Marketplace:TenantId"];
             var clientId = Configuration["Marketplace:ClientId"];
             var clientSecret = Configuration["Marketplace:ClientSecret"];
@@ -114,6 +114,7 @@ namespace LandingPage
             // get standard Azure creds
             var creds = new ClientSecretCredential(tenantId, clientId, clientSecret);
 
+            // register a MarketplaceSaaaSClient so it can be injected
             services.TryAddScoped<IMarketplaceSaaSClient>(sp =>
             {
                 return new MarketplaceSaaSClient(creds);

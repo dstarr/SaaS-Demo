@@ -1,15 +1,13 @@
-﻿using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
-using LandingPage.ViewModels;
-using LandingPage.ViewModels.Home;
+﻿using LandingPage.ViewModels.Home;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using Microsoft.Marketplace.SaaS;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace LandingPage.Controllers
 {
