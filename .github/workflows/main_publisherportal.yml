@@ -11,7 +11,7 @@ on:
 
 env:
   PROJECT: './src/PubisherPortal/PublisherPortal.csproj'
-  AZURE_WEBAPP_PACKAGE_PATH: './src/PublisherPortal/publish'
+  AZURE_WEBAPP_PACKAGE_PATH: './src/PubisherPortal/publish'
   WORKING_DIR: 'src\PubisherPortal'
 
 jobs:
