@@ -31,7 +31,7 @@ namespace PubisherPortal
             //     .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"));
 
             // Configure AAD and Graph integration
-            services.AddMicrosoftIdentityWebAppAuthentication(this.Configuration, "AzureAd") // Sign on with AAD
+            services.AddMicrosoftIdentityWebAppAuthentication(this.Configuration) // Sign on with AAD
                 .EnableTokenAcquisitionToCallDownstreamApi(new string[] { "user.read" }) // Call Graph API
                 .AddMicrosoftGraph() // Use defaults with Graph V1
                 .AddInMemoryTokenCaches(); // Add token caching

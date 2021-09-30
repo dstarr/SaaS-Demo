@@ -115,8 +115,6 @@ namespace LandingPage
             var clientId = Configuration["MarketplaceApi:ClientId"];
             var clientSecret = Configuration["MarketplaceApi:ClientSecret"];
 
-            
-
             // get standard Azure creds
             var creds = new ClientSecretCredential(tenantId, clientId, clientSecret);
 

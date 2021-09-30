@@ -16,6 +16,7 @@ using PubisherPortal.ViewModels.Home;
 namespace PubisherPortal.Controllers
 {
     [Authorize]
+    [Route("~/")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -38,7 +39,7 @@ namespace PubisherPortal.Controllers
         {
             IList<Subscription> subscriptionsList = new List<Subscription>();
             var subscriptions = _marketplaceSaaSClient.Fulfillment.ListSubscriptionsAsync(cancellationToken: cancellationToken);
-            
+
             await foreach (var subscription in subscriptions)
             {
                 subscriptionsList.Add(subscription);
@@ -52,7 +53,30 @@ namespace PubisherPortal.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Shows subscription details
+        /// </summary>
+        /// <param name="id">The subscription ID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>IActionResult</returns>
+        [Route("Subscription/{id}")]
+        public async Task<IActionResult> SubscriptionAsync(Guid id, CancellationToken cancellationToken)
+        {
 
+            Subscription subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(id, cancellationToken: cancellationToken)).Value;
+            SubscriptionPlans plans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(id, cancellationToken: cancellationToken)).Value;
+
+            var model = new SubscriptionViewModel()
+            {
+
+                Subscription = subscription,
+                Plans = plans.Plans
+            };
+
+            return View(model);
+        }
+
+        [Route("Privacy")]
         public IActionResult Privacy()
         {
             return View();
@@ -60,6 +84,7 @@ namespace PubisherPortal.Controllers
 
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [Route("Error")]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
