@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: src
+        working-directory: src/LandingPage
 
     steps:
       - uses: actions/checkout@v2
@@ -29,13 +29,13 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/landingpage
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{env.DOTNET_ROOT}}/landingpage
           
   deploy:
     runs-on: windows-latest
@@ -45,13 +45,16 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - run: echo 'Web app URL'
+      - run: echo ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
-          name: .net-app
+          name: .landingpage
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+        id: deploy-to-webapp1
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'saasdemo-as'
