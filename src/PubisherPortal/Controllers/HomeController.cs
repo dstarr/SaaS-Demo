@@ -89,5 +89,28 @@ namespace PubisherPortal.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        /// <summary>
+        /// This action will mark the subscription State as Subscribed
+        /// </summary>
+        /// <param name="id">The subscription ID</param>
+        /// <param name="planId">The plan ID as defined in Partner Center</param>
+        /// <param name="cancellationToken">Cancelltion token</param>
+        /// <returns>IActionResult</returns>
+        [Route("Activate/{id}/{planId}")]
+        public async Task<IActionResult> ActivateAsync(Guid id, string planId, CancellationToken cancellationToken)
+        {
+            SubscriberPlan subscriberPlan = new SubscriberPlan()
+            {
+                PlanId = planId,
+            };
+
+            _ = await _marketplaceSaaSClient.Fulfillment.ActivateSubscriptionAsync(id, subscriberPlan, cancellationToken: cancellationToken);
+
+            return this.RedirectToAction("Subscription", new { id = id });
+
+        }
+
+
     }
 }

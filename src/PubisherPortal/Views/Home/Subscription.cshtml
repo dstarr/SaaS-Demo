@@ -104,7 +104,7 @@ else
                     @if (Model.Subscription.SaasSubscriptionStatus == SubscriptionStatusEnum.Subscribed)
                     {
                         <li>
-                            @Html.ActionLink("Delete (Unsubscribe) this subscription", "Delete", "Publisher", new { id = Model.Subscription.Id })
+                            @Html.ActionLink("Delete (Unsubscribe) this subscription", "Delete", new { id = Model.Subscription.Id })
                         </li>
                     }
                 </ul>

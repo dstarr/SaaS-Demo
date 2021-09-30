@@ -90,6 +90,18 @@ namespace PubisherPortal
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                    name: "update",
+                    pattern: "{controller=Pubisher}/{action=Update}/{subscriptionId:Guid}/{planId}/{operationId:Guid}");
+
+                endpoints.MapControllerRoute(
+                    name: "operations",
+                    pattern: "{controller=Pubisher}/{action=Operations}/{subscriptionId:Guid}/{operationId:Guid}");
+
+                endpoints.MapControllerRoute(
+                    name: "activate_update",
+                    pattern: "{controller=Pubisher}/{action=Activate}/{id:Guid}/{planId}");
+
+                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
