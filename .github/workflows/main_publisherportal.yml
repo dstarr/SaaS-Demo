@@ -9,12 +9,18 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  PROJECT: './src/PublisherPortal/PublisherPortal.csproj'
+  AZURE_WEBAPP_PACKAGE_PATH: './src/PublisherPortal/publish'
+  WORKING_DIR: 'src\PubisherPortal'
+
 jobs:
   build-publisherportal:
+
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: src\PubisherPortal
+        working-directory: ${{ env.WORKING_DIR }}
 
     steps:
       - uses: actions/checkout@v2
@@ -26,10 +32,10 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build ${{ env.PROJECT }} --configuration Release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}\publisherportal
+        run: dotnet publish -c Release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -45,6 +51,9 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - run: echo 'ENV.URL''
+      - run: echo ${{ env.url }}
+    
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
@@ -57,4 +66,4 @@ jobs:
           app-name: 'saasdemo-pub'
           slot-name: 'Production'
           publish-profile: ${{ secrets.SAASDEMO_PUB_DD89 }}
-          package: .
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}

@@ -45,6 +45,7 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - run: echo ${{ env.url }}
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
