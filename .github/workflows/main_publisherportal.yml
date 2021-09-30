@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: .publisherportal
-          path: ${{env.DOTNET_ROOT}}\publisherportal
+          path: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}/publisherportal
           
   deploy:
     runs-on: windows-latest
