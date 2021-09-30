@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT: './src/PublisherPortal/PublisherPortal.csproj'
+  PROJECT: './src/PubisherPortal/PublisherPortal.csproj'
   AZURE_WEBAPP_PACKAGE_PATH: './src/PublisherPortal/publish'
   WORKING_DIR: 'src\PubisherPortal'
 
