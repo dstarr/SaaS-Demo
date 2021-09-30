@@ -1,5 +1,3 @@
-using System;
-using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -7,17 +5,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using Microsoft.Marketplace.SaaS;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Azure.Identity;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Marketplace.SaaS;
 
-namespace LandingPage
+namespace PubisherPortal
 {
-
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -30,11 +27,14 @@ namespace LandingPage
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+            //     .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"));
+
             // Configure AAD and Graph integration
-            services.AddMicrosoftIdentityWebAppAuthentication(this.Configuration) // Sign on with AAD
-                    .EnableTokenAcquisitionToCallDownstreamApi(new string[] { "user.read" }) // Call Graph API
-                    .AddMicrosoftGraph() // Use defaults with Graph V1
-                    .AddInMemoryTokenCaches(); // Add token caching
+            services.AddMicrosoftIdentityWebAppAuthentication(this.Configuration, "AzureAd") // Sign on with AAD
+                .EnableTokenAcquisitionToCallDownstreamApi(new string[] { "user.read" }) // Call Graph API
+                .AddMicrosoftGraph() // Use defaults with Graph V1
+                .AddInMemoryTokenCaches(); // Add token caching
 
             // Configure OpenIdConnect
             services.Configure<OpenIdConnectOptions>(options =>
@@ -48,8 +48,6 @@ namespace LandingPage
                 };
             });
 
-            
-            // add the marketplace client to services
             ConfigureMarketplaceServices(services);
 
             services.AddControllersWithViews(options =>
@@ -60,8 +58,12 @@ namespace LandingPage
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
 
+            this.ConfigureMarketplaceServices(services);
+
             services.AddRazorPages()
-                    .AddMicrosoftIdentityUI();
+                 .AddMicrosoftIdentityUI().AddMvcOptions(options => {});
+            
+            services.AddAuthorization(options=>{options.FallbackPolicy = options.DefaultPolicy;});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +76,7 @@ namespace LandingPage
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -87,25 +90,12 @@ namespace LandingPage
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "update",
-                    pattern: "{controller=Pubisher}/{action=Update}/{subscriptionId:Guid}/{planId}/{operationId:Guid}");
-
-                endpoints.MapControllerRoute(
-                    name: "operations",
-                    pattern: "{controller=Pubisher}/{action=Operations}/{subscriptionId:Guid}/{operationId:Guid}");
-
-                endpoints.MapControllerRoute(
-                    name: "activate_update",
-                    pattern: "{controller=Pubisher}/{action=Activate}/{id:Guid}/{planId}");
-                
-                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                
                 endpoints.MapRazorPages();
+                endpoints.MapControllers();
             });
         }
-        
 
         private void ConfigureMarketplaceServices(IServiceCollection services)
         {
@@ -114,8 +104,6 @@ namespace LandingPage
             var tenantId = Configuration["MarketplaceApi:TenantId"];
             var clientId = Configuration["MarketplaceApi:ClientId"];
             var clientSecret = Configuration["MarketplaceApi:ClientSecret"];
-
-            
 
             // get standard Azure creds
             var creds = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -126,7 +114,5 @@ namespace LandingPage
                 return new MarketplaceSaaSClient(creds);
             });
         }
-
-
     }
 }

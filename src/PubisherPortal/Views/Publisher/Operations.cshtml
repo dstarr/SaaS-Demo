@@ -1,0 +1,85 @@
+﻿@using Microsoft.Marketplace.SaaS.Models
+@model LandingPage.ViewModels.Publisher.OperationsViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h3>Subscription</h3>
+
+<table class="main-table">
+    <thead><tr><th>Item</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td class="main-td">Name</td><td>@Model.Subscription.Name</td></tr>
+        <tr><td class="main-td">Id</td><td>@Model.Subscription.Id</td></tr>
+        <tr><td class="main-td">OfferId</td><td>@Model.Subscription.OfferId</td></tr>
+        <tr><td class="main-td">PlanId</td><td>@Model.Subscription.PlanId</td></tr>
+        <tr><td class="main-td">SaasSubscriptionStatus</td><td>@Model.Subscription.SaasSubscriptionStatus</td></tr>
+    </tbody>
+</table>
+
+
+
+<h3>Current Subscription Operation</h3>
+<table class="main-table">
+    <thead><tr><th>Item</th><th>Value</th></tr></thead>
+    <tbody>
+        <tr><td class="main-td">Action</td><td>@Model.OperationStatus.Action</td></tr>
+        <tr><td class="main-td">Status</td><td>@Model.OperationStatus.Status.Value</td></tr>
+        <tr><td class="main-td">Id</td><td>@Model.OperationStatus.Id</td></tr>
+        <tr><td class="main-td">OfferId</td><td>@Model.OperationStatus.OfferId</td></tr>
+        <tr><td class="main-td">PlanId</td><td>@Model.OperationStatus.PlanId</td></tr>
+        <tr><td class="main-td">SubscriptionId</td><td>@Model.OperationStatus.SubscriptionId</td></tr>
+        <tr><td class="main-td">LocalDateTime</td><td>@Model.OperationStatus.TimeStamp.Value.LocalDateTime</td></tr>
+    </tbody>
+</table>
+
+<p>
+    Are you sure you want to complete this operation?
+    (
+    @{
+        var routeValuesY = new
+        {
+            subscriptionId = Model.Subscription.Id,
+            planId = Model.OperationStatus.PlanId,
+            operationId = Model.OperationStatus.Id,
+
+        };
+        @Html.ActionLink("Yes", "Update", routeValuesY)
+    }
+    /
+    @{
+
+        var routeValuesN = new
+        {
+            id = Model.Subscription.Id.Value
+
+        };
+        @Html.ActionLink("No", "Subscription", routeValuesN)
+    }
+    )
+</p>
+
+
+
+<h3>All Outstanding Subscription Operations</h3>
+<table class="main-table">
+    <thead><tr><th>Item</th><th>Value</th></tr></thead>
+    <tbody>
+
+        @foreach (var operation in Model.SubscriptionOperations)
+        {
+
+            <tr><td class="main-td" colspan="2"><b>Operation</b></td></tr>
+            <tr><td class="main-td">Action</td><td>@operation.Action</td></tr>
+            <tr><td class="main-td">Status</td><td>@operation.Status.Value</td></tr>
+            <tr><td class="main-td">Id</td><td>@operation.OfferId</td></tr>
+            <tr><td class="main-td">OfferId</td><td>@operation.OfferId</td></tr>
+            <tr><td class="main-td">PlanId</td><td>@operation.PlanId</td></tr>
+            <tr><td class="main-td">SubscriptionId</td><td>@operation.SubscriptionId</td></tr>
+            <tr><td class="main-td">LocalDateTime</td><td>@operation.TimeStamp.Value.LocalDateTime</td></tr>
+        }
+
+    </tbody>
+</table>
