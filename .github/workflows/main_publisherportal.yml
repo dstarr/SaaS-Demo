@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Pubisher Portal
+name: Build and deploy Landing Page
 
 on:
   push:
@@ -9,18 +9,12 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  PROJECT: './src/PubisherPortal/PublisherPortal.csproj'
-  AZURE_WEBAPP_PACKAGE_PATH: './src/PubisherPortal/publish'
-  WORKING_DIR: 'src\PubisherPortal'
-
 jobs:
   build-publisherportal:
-
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: ${{ env.WORKING_DIR }}
+        working-directory: src\PublisherPortal
 
     steps:
       - uses: actions/checkout@v2
@@ -32,16 +26,16 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        run: dotnet build ${{ env.PROJECT }} --configuration Release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}\publisherportal
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .publisherportal
-          path: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}/publisherportal
+          path: ${{env.DOTNET_ROOT}}\publisherportal
           
   deploy:
     runs-on: windows-latest
@@ -57,10 +51,10 @@ jobs:
           name: .publisherportal
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp2
+        id: deploy-to-webapp1
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'saasdemo-pub'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.SAASDEMO_PUB_DD89 }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4734B5BEB2A54200983F44BC4C954792 }}
+          package: .
