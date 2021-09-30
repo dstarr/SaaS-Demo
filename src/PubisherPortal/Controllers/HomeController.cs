@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using LandingPage.ViewModels.Publisher;
 using Microsoft.Marketplace.SaaS;
 using Microsoft.Marketplace.SaaS.Models;
 using PubisherPortal.ViewModels.Home;
@@ -111,6 +110,95 @@ namespace PubisherPortal.Controllers
 
         }
 
+        /// <summary>
+        /// This action will mark the subscription State as Unsubscribed
+        /// </summary>
+        /// <param name="id">The id of the subscription as a GUID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>IActionResult</returns>
+        [Route("Delete/{id}")]
+        public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            _logger.Log(LogLevel.Information, "Deleting subscription");
+
+            var operationId = await _marketplaceSaaSClient.Fulfillment.DeleteSubscriptionAsync(id, cancellationToken: cancellationToken);
+            
+            _logger.Log(LogLevel.Information, $"Operation ID: {operationId}");
+
+            return this.RedirectToAction("Subscription", new { id = id });
+        }
+
+        /// <summary>
+        /// Changes plan for the subscription based on the plan ID
+        /// </summary>
+        /// <param name="subscriptionId">The subscription ID as a GUID</param>
+        /// <param name="planId">The plan ID as assigned in Partner Center</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>IActionResult</returns>
+        [Route("ChangePlan/{SubscriptionId}/{planId}")]
+        public IActionResult ChangePlan(Guid subscriptionId, string planId, CancellationToken cancellationToken)
+        {
+            _logger.Log(LogLevel.Information, $"Changing Plan to: {planId}");
+
+            var subscriberPlan = new SubscriberPlan()
+            {
+                PlanId = planId,
+            };
+
+            var operationId = this._marketplaceSaaSClient.Fulfillment.UpdateSubscription(subscriptionId, subscriberPlan, cancellationToken: cancellationToken);
+
+            _logger.Log(LogLevel.Information, $"Operation ID: {operationId}");
+
+
+            return this.RedirectToAction("Operations", new { subscriptionId = subscriptionId, operationId = operationId });
+        }
+
+        /// <summary>
+        /// Gets a specific operation for a given subscription
+        /// </summary>
+        /// <param name="subscriptionId">The subscription ID</param>
+        /// <param name="operationId">The operation's ID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>IActionResult</returns>
+        [Route("Operations/{subscriptionId}/{operationId}")]
+        public async Task<IActionResult> OperationsAsync(Guid subscriptionId, Guid operationId, CancellationToken cancellationToken)
+        {
+            var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(subscriptionId, cancellationToken: cancellationToken)).Value;
+            var subscriptionOperations = (await _marketplaceSaaSClient.Operations.ListOperationsAsync(subscriptionId, cancellationToken: cancellationToken)).Value;
+            var operationStatus = (await _marketplaceSaaSClient.Operations.GetOperationStatusAsync(subscriptionId, operationId, cancellationToken: cancellationToken)).Value;
+
+            var model = new OperationsViewModel()
+            {
+                Subscription = subscription,
+                SubscriptionOperations = subscriptionOperations.Operations,
+                OperationStatus = operationStatus
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Changes the plan for a given subscription
+        /// </summary>
+        /// <param name="subscriptionId">The subscription ID</param>
+        /// <param name="planId">The target plan ID as defined in Partner Center</param>
+        /// <param name="operationId">The ChangePlan operation ID</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>IActionResult</returns>
+        [Route("Update/{subscriptionId:Guid}/{planId}/{operationId:Guid}")]
+        public async Task<IActionResult> UpdateAsync(Guid subscriptionId, string planId, Guid operationId, CancellationToken cancellationToken)
+        {
+            var updateOperation = new UpdateOperation()
+            {
+                PlanId = planId,
+                Status = UpdateOperationStatusEnum.Success
+            };
+
+            var status = (await _marketplaceSaaSClient.Operations.UpdateOperationStatusAsync(subscriptionId,
+                    operationId, updateOperation, cancellationToken: cancellationToken)).Status;
+
+            return this.RedirectToAction("Subscription", new { id = subscriptionId });
+        }
 
     }
 }

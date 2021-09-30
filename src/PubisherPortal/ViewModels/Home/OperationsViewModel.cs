@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Marketplace.SaaS.Models;
 
-namespace LandingPage.ViewModels.Publisher
+namespace PubisherPortal.ViewModels.Home
 {
     public class OperationsViewModel
     {
