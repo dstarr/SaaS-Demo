@@ -56,5 +56,5 @@ jobs:
         with:
           app-name: 'saasdemo-pub'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4734B5BEB2A54200983F44BC4C954792 }}
+          publish-profile: ${{ secrets.SAASDEMO_PUB_DD89 }}
           package: .
