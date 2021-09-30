@@ -39,7 +39,7 @@ jobs:
           
   deploy:
     runs-on: windows-latest
-    needs: build
+    needs: build-landingpage
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
