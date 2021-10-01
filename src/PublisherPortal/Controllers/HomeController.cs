@@ -54,7 +54,7 @@ namespace PubisherPortal.Controllers
                     Message = "ListSubscriptionsAsync"
                 };
 
-                return Error(errorViewModel);
+                return this.Error(errorViewModel);
             }
 
 
@@ -100,12 +100,11 @@ namespace PubisherPortal.Controllers
             return View();
         }
 
-        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("Error")]
-        public IActionResult Error()
+        public IActionResult Error(ErrorViewModel model)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(model);
         }
 
         /// <summary>
