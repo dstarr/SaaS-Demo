@@ -51,7 +51,7 @@ jobs:
           name: .publisherportal
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp1
+        id: deploy-to-webapp2
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'saasdemo-pub'
