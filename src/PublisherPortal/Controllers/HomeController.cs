@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using PubisherPortal.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure;
 using Microsoft.Marketplace.SaaS;
 using Microsoft.Marketplace.SaaS.Models;
 using PubisherPortal.ViewModels.Home;
+using PublisherPortal.ViewModels;
 
 namespace PubisherPortal.Controllers
 {
@@ -37,7 +38,25 @@ namespace PubisherPortal.Controllers
         public async Task<IActionResult> IndexAsync(CancellationToken cancellationToken)
         {
             IList<Subscription> subscriptionsList = new List<Subscription>();
-            var subscriptions = _marketplaceSaaSClient.Fulfillment.ListSubscriptionsAsync(cancellationToken: cancellationToken);
+            AsyncPageable<Subscription> subscriptions = null;
+
+            try
+            {
+                subscriptions = _marketplaceSaaSClient.Fulfillment.ListSubscriptionsAsync(cancellationToken: cancellationToken);
+
+            }
+            catch (Exception e)
+            {
+                ErrorViewModel errorViewModel = new ErrorViewModel()
+                {
+                    Exception = e,
+                    ShowException = true,
+                    Message = "ListSubscriptionsAsync"
+                };
+
+                return Error(errorViewModel);
+            }
+
 
             await foreach (var subscription in subscriptions)
             {

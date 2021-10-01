@@ -1,11 +1,13 @@
 using System;
 
-namespace PubisherPortal.Models
+namespace PublisherPortal.ViewModels
 {
     public class ErrorViewModel
     {
-        public string RequestId { get; set; }
+        public string Message { get; internal set; }
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        public Exception Exception { get; internal set; }
+
+        public bool ShowException { get; internal set; }
     }
 }
