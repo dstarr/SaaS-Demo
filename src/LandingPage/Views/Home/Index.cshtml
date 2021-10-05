@@ -129,5 +129,17 @@ else
         <div style="text-align: left">
             @Model.PurchaseIdToken
         </div>
+
+
+        @if (Model.Subscription.SaasSubscriptionStatus.Value == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.PendingFulfillmentStart)
+        {
+            <h3>Customer Action</h3>
+
+            <div style="text-align: left">
+                @Html.ActionLink("Notify pubisher to activate account", "Index", "Submit")
+            </div>
+        }
+
+
     </div>
 }
