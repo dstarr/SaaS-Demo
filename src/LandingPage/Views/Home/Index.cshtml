@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims
+@using System.Web
 @using Microsoft.AspNetCore.Mvc.ModelBinding
 @model LandingPage.ViewModels.Home.IndexViewModel
 @{
@@ -12,134 +13,67 @@
 }
 else
 {
-    <div class="main-content text-center">
+    var planName = string.Empty;
+
+    @foreach (var plan in Model.SubscriptionPlans.Plans)
+    {
+        @if (@plan.PlanId == Model.Subscription.PlanId)
+        {
+            planName = plan.DisplayName;
+        }
+    }
+
+    <div class="main-content">
+
+        <h3>Thank you for your subscription</h3>
 
 
+        <p>Please verify the following information is correct before submitting your subscription for activation by Contoso, Inc.</p>
 
-
-        <h3>User Claims Values</h3>
         <table class="main-table">
-            <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
-
-                @foreach (var claim in Model.UserClaims)
-                {
-                    <tr><td class="main-td">@claim.Type</td><td>@claim.Value</td></tr>
-                }
+                <tr><td class="main-td">Logged in user</td><td>@Model.GraphUser.DisplayName</td></tr>
+                <tr><td class="main-td">Email</td><td>@Model.GraphUser.Mail</td></tr>
+                <tr><td class="main-td">Subscription name</td><td>@Model.Subscription.Name</td></tr>
+                <tr><td class="main-td">Plan name</td><td>@planName</td></tr>
+                <tr><td class="main-td">Subscription will auto renew</td><td>@Model.Subscription.AutoRenew</td></tr>
+                <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate.Value.DateTime.ToShortDateString()</td></tr>
+                <tr><td class="main-td">Term End Date</td><td>@Model.Subscription.Term.EndDate.Value.DateTime.ToShortDateString()</td></tr>
+                <tr><td class="main-td">Subscription State</td><td>@Model.Subscription.SaasSubscriptionStatus.Value</td></tr>
+                <tr><td class="main-td">Tenant ID</td><td>@Model.Subscription.Beneficiary.TenantId</td></tr>
             </tbody>
         </table>
 
-        <h3>Microsoft Graph Values</h3>
 
-        <table class="main-table">
-            <thead><tr><th>Item</th><th>Value</th></tr></thead>
-            <tbody>
-                <tr><td class="main-td">DisplayName</td><td>@Model.GraphUser.DisplayName</td></tr>
-                <tr><td class="main-td">GivenName</td><td>@Model.GraphUser.GivenName</td></tr>
-                <tr><td class="main-td">SurName</td><td>@Model.GraphUser.Surname</td></tr>
-                <tr><td class="main-td">Mail</td><td>@Model.GraphUser.Mail</td></tr>
-                <tr><td class="main-td" colspan="2">Many More Values Available</td></tr>
-            </tbody>
-        </table>
-
-
-        <h3>Subscription Values</h3>
-        <table class="main-table">
-            <thead><tr><th>Item</th><th>Value</th></tr></thead>
-            <tbody>
-                <tr><td class="main-td">AutoRenew</td><td>@Model.Subscription.AutoRenew</td></tr>
-                <tr><td class="main-td">Beneficiary.EmailId</td><td>@Model.Subscription.Beneficiary.EmailId</td></tr>
-                <tr><td class="main-td">Beneficiary.Puid</td><td>@Model.Subscription.Beneficiary.Puid</td></tr>
-                <tr><td class="main-td">Beneficiary.TenantId</td><td>@Model.Subscription.Beneficiary.TenantId</td></tr>
-                <tr><td class="main-td">Created</td><td>@Model.Subscription.Created</td></tr>
-                <tr><td class="main-td">FulfillmentId</td><td>@Model.Subscription.FulfillmentId</td></tr>
-                <tr><td class="main-td">Id</td><td>@Model.Subscription.Id</td></tr>
-                <tr><td class="main-td">IsFreeTrial</td><td>@Model.Subscription.IsFreeTrial</td></tr>
-                <tr><td class="main-td">IsTest</td><td>@Model.Subscription.IsTest</td></tr>
-                <tr><td class="main-td">Name</td><td>@Model.Subscription.Name</td></tr>
-                <tr><td class="main-td">OfferId</td><td>@Model.Subscription.OfferId</td></tr>
-                <tr><td class="main-td">PlanId</td><td>@Model.Subscription.PlanId</td></tr>
-                <tr><td class="main-td">PublisherId</td><td>@Model.Subscription.PublisherId</td></tr>
-                <tr><td class="main-td">Purchaser.EmailId</td><td>@Model.Subscription.Purchaser.EmailId</td></tr>
-                <tr><td class="main-td">Purchaser.Puid</td><td>@Model.Subscription.Purchaser.Puid</td></tr>
-                <tr><td class="main-td">Purchaser.TenantId</td><td>@Model.Subscription.Purchaser.TenantId</td></tr>
-                <tr><td class="main-td">SaasSubscriptionStatus</td><td>@Model.Subscription.SaasSubscriptionStatus.Value</td></tr>
-                <tr><td class="main-td">SandboxType</td><td>@Model.Subscription.SandboxType.Value</td></tr>
-                <tr><td class="main-td">SessionId</td><td>@Model.Subscription.SessionId</td></tr>
-                <tr><td class="main-td">SessionMode</td><td>@Model.Subscription.SessionMode.Value</td></tr>
-                <tr><td class="main-td">StoreFront</td><td>@Model.Subscription.StoreFront</td></tr>
-                <tr><td class="main-td">Term End Date</td><td>@Model.Subscription.Term.EndDate</td></tr>
-                <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate</td></tr>
-            </tbody>
-        </table>
-
-        <h3>Subscription Plans</h3>
-        <table class="main-table">
-            <tbody>
-                @foreach (var plan in Model.SubscriptionPlans.Plans)
-                {
-                    <tr>
-                        <td colspan="2">
-                            <b>@plan.DisplayName</b>
-
-                            @if (@plan.PlanId == Model.Subscription.PlanId)
-                            {
-                                <span>- Current plan</span>
-                            }
-
-
-                        </td>
-                    </tr>
-                    <tr><td class="main-td">DisplayName</td><td>@Html.Raw(plan.DisplayName)</td></tr>
-                    <tr><td class="main-td">Description</td><td>@Html.Raw(plan.Description)</td></tr>
-                    <tr><td class="main-td">PlanId</td><td>@plan.PlanId</td></tr>
-                }
-            </tbody>
-        </table>
-
-        @*
-            <!-- <h3>Pending Operations</h3>
-            <table class="main-table">
-            <thead><tr><th>Item</th><th>Value</th></tr></thead>
-            <tbody>
-
-            @foreach (var operation in Model.OperationList.Operations)
-            {
-            <tr><td colspan="2"><b>Operation: @operation.Id</b></td></tr>
-            <tr><td class="main-td"></td><td>@operation.TimeStamp</td></tr>
-            <tr><td class="main-td"></td><td>@operation.Quantity</td></tr>
-            <tr><td class="main-td"></td><td>@operation.Action.Value</td></tr>
-            <tr><td class="main-td"></td><td>@operation.ActivityId</td></tr>
-            <tr><td class="main-td"></td><td>@operation.OfferId</td></tr>
-            <tr><td class="main-td"></td><td>@operation.PlanId</td></tr>
-            <tr><td class="main-td"></td><td>@operation.PublisherId</td></tr>
-            <tr><td class="main-td"></td><td>@operation.Status.Value</td></tr>
-            <tr><td class="main-td"></td><td>@operation.SubscriptionId.Value</td></tr>
-            }
-            </tbody>
-            </table> -->
-        *@
-
-        <h3>Marketplace Purchase Id Token</h3>
+        <h3>Available Customer Actions</h3>
 
         <div style="text-align: left">
-            @Model.PurchaseIdToken
-        </div>
-
-
-        @if (Model.Subscription.SaasSubscriptionStatus.Value == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.PendingFulfillmentStart)
-        {
-            <h3>Customer Action</h3>
-
-            <div style="text-align: left">
-                <ul>
+            <ul>
+                @if (Model.Subscription.SaasSubscriptionStatus.Value == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.PendingFulfillmentStart)
+                {
                     <li>
                         @Html.ActionLink("Notify pubisher to activate account", "Index", "Submit")
                     </li>
-                </ul>
-            </div>
-        }
+                }
+                
+                @if (Model.Subscription.SaasSubscriptionStatus.Value == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.Subscribed)
+                {
+                    <li>
+                        @Html.ActionLink("Unsubscribe", "Index", "Unsubscribe", new { id = Model.Subscription.Id })
+                    </li>
+                }
 
+            </ul>
+        </div>
+
+        <hr/>
+        
+        <h3>Extra Functionality for Publishers</h3>
+
+        <p>
+            @Html.ActionLink("This text", "Details", new { token = Model.PurchaseIdToken }) would
+            not normally be seen on a Landing page. It is for demonstration purposes only.
+        </p>
 
     </div>
 }

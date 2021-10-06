@@ -13,6 +13,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.Marketplace.SaaS;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 
 namespace LandingPage
@@ -46,9 +47,18 @@ namespace LandingPage
 
                     return Task.CompletedTask;
                 };
+
             });
 
-            
+            // validate attributes in the JWT body
+            services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.TokenValidationParameters.ValidAudience = this.Configuration["MarketplaceApi:ClientId"];
+                    options.TokenValidationParameters.ValidIssuer = $"https://sts.windows.net/{this.Configuration["MarketplaceApi:TenantId"]}/";
+                });
+
+
+
             // add the marketplace client to services
             ConfigureMarketplaceServices(services);
 

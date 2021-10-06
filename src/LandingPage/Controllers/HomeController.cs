@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace LandingPage.Controllers
 {
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
+    [AuthorizeForScopes(Scopes = new string[] { "user.read" })]
     public class HomeController : Controller
     {
         private readonly IMarketplaceSaaSClient _marketplaceSaaSClient;
@@ -33,7 +34,6 @@ namespace LandingPage.Controllers
         /// <param name="token">THe marketplace purchase ID token</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns></returns>
-        [AuthorizeForScopes(Scopes = new string[] { "user.read" })]
         public async Task<IActionResult> IndexAsync(string token, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(token))
@@ -46,7 +46,6 @@ namespace LandingPage.Controllers
             // resolve the subscription using the marketplace purchase id token
             var resolvedSubscription = (await _marketplaceSaaSClient.Fulfillment.ResolveAsync(token, cancellationToken: cancellationToken)).Value;
             var subscriptionPlans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
-            var operationList = (await _marketplaceSaaSClient.Operations.ListOperationsAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
 
             // get graph current user data
             var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
@@ -54,11 +53,40 @@ namespace LandingPage.Controllers
             // build the model
             var model = new IndexViewModel()
             {
-                PurchaseIdToken = HttpUtility.UrlDecode(token),
+                PurchaseIdToken = token,
                 UserClaims = this.User.Claims,
                 GraphUser = graphApiUser,
                 Subscription = resolvedSubscription.Subscription,
-                OperationList = operationList,
+                SubscriptionPlans = subscriptionPlans
+            };
+
+            return View(model);
+        }
+
+        [Route("Details")]
+        public async Task<IActionResult> DetailsAsync(string token, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                this.ModelState.AddModelError(string.Empty, "Token URL parameter cannot be empty");
+                this.ViewBag.Message = "Token URL parameter cannot be empty";
+                return this.View();
+            }
+
+            // resolve the subscription using the marketplace purchase id token
+            var resolvedSubscription = (await _marketplaceSaaSClient.Fulfillment.ResolveAsync(token, cancellationToken: cancellationToken)).Value;
+            var subscriptionPlans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
+
+            // get graph current user data
+            var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
+
+            // build the model
+            var model = new DetailsViewModel()
+            {
+                PurchaseIdToken = token,
+                UserClaims = this.User.Claims,
+                GraphUser = graphApiUser,
+                Subscription = resolvedSubscription.Subscription,
                 SubscriptionPlans = subscriptionPlans
             };
 
