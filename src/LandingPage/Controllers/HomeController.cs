@@ -1,4 +1,5 @@
-﻿using LandingPage.ViewModels.Home;
+﻿using System;
+using LandingPage.ViewModels.Home;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.Marketplace.SaaS;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.Extensions.Logging;
 
 namespace LandingPage.Controllers
 {
@@ -48,7 +50,7 @@ namespace LandingPage.Controllers
 
             // get graph current user data
             var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
-            
+
             // build the model
             var model = new IndexViewModel()
             {

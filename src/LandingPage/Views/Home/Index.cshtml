@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Mvc.ModelBinding
 @model LandingPage.ViewModels.Home.IndexViewModel
 @{
     ViewData["Title"] = "Home Page";
@@ -14,7 +15,9 @@ else
     <div class="main-content text-center">
 
 
-        <h3>Claims Values</h3>
+
+
+        <h3>User Claims Values</h3>
         <table class="main-table">
             <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
@@ -26,7 +29,7 @@ else
             </tbody>
         </table>
 
-        <h3>Graph Values</h3>
+        <h3>Microsoft Graph Values</h3>
         <table class="main-table">
             <thead><tr><th>Item</th><th>Value</th></tr></thead>
             <tbody>
@@ -34,10 +37,9 @@ else
                 <tr><td class="main-td">GivenName</td><td>@Model.GraphUser.GivenName</td></tr>
                 <tr><td class="main-td">SurName</td><td>@Model.GraphUser.Surname</td></tr>
                 <tr><td class="main-td">Mail</td><td>@Model.GraphUser.Mail</td></tr>
-                <tr><td class="main-td">JobTitle</td><td>@Model.GraphUser.JobTitle</td></tr>
-
             </tbody>
         </table>
+        <p>And many other values.</p>
 
         <h3>Subscription Values</h3>
         <table class="main-table">
@@ -68,14 +70,6 @@ else
                 <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate</td></tr>
             </tbody>
         </table>
-
-        <h3>Allowed Customer Operations</h3>
-        <ul style="text-align: left;">
-            @foreach (var operation in Model.Subscription.AllowedCustomerOperations)
-            {
-                <li>@operation</li>
-            }
-        </ul>
 
         <h3>Subscription Plans</h3>
         <table class="main-table">
@@ -135,13 +129,12 @@ else
         {
             <h3>Customer Action</h3>
 
-            
-
             <div style="text-align: left">
-                <p>
-                    After your submission, please allow 1-3 days for your subscription to become active.
-                </p>
-                @Html.ActionLink("Notify pubisher to activate account", "Index", "Submit")
+                <ul>
+                    <li>
+                        @Html.ActionLink("Notify pubisher to activate account", "Index", "Submit")
+                    </li>
+                </ul>
             </div>
         }
 
