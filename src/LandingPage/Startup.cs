@@ -51,6 +51,7 @@ namespace LandingPage
             });
 
             // validate attributes in the JWT body
+            // audience and issuer
             services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.TokenValidationParameters.ValidAudience = this.Configuration["MarketplaceApi:ClientId"];
