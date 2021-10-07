@@ -1,7 +1,7 @@
 ﻿@using Microsoft.Marketplace.SaaS.Models
 @model PubisherPortal.ViewModels.Home.SubscriptionViewModel
 @{
-    ViewData["Title"] = "Subscriptions Management Page";
+    ViewData["Title"] = "Subscription Management";
 }
 
 @if (ViewBag.Message != null)
@@ -53,21 +53,8 @@ else
                 {
                     <span>- Current Plan</span>
                 } 
-                @* 
                     
-                // This code puts in a link to allow the publisher to change plans. 
-                // It doesn't work right now to do so. The operation fails
-                else if (Model.Subscription.SaasSubscriptionStatus.Value == SubscriptionStatusEnum.Subscribed)
-                 { 
-                     var routeValues = new 
-                     { 
-                         subscriptionId = Model.Subscription.Id, 
-                         planId = plan.PlanId 
-                     }
-                     @Html.ActionLink("- Change to this plan", "ChangePlan", routeValues)
-                 } *@
-
-                <table class="main-table">
+                <table class="main-table" style="padding-top: 20px;">
                     <tbody>
                     <tr><td class="main-td">DisplayName</td><td>@plan.DisplayName</td></tr>
                     <tr><td class="main-td">Description</td><td>@Html.Raw(plan.Description)</td></tr>

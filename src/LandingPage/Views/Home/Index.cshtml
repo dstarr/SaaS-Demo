@@ -1,9 +1,6 @@
-﻿@using System.Security.Claims
-@using System.Web
-@using Microsoft.AspNetCore.Mvc.ModelBinding
-@model LandingPage.ViewModels.Home.IndexViewModel
+﻿@model LandingPage.ViewModels.Home.IndexViewModel
 @{
-    ViewData["Title"] = "Landing Page";
+    ViewData["Title"] = "Contoso Offer Landing Page";
 }
 
 @if (ViewBag.Message != null)
@@ -32,7 +29,7 @@ else
 
         <table class="main-table">
             <tbody>
-                <tr><td class="main-td">Logged in user</td><td>@Model.GraphUser.DisplayName</td></tr>
+                <tr><td class="main-td">Current user</td><td>@Model.GraphUser.DisplayName</td></tr>
                 <tr><td class="main-td">Email</td><td>@Model.GraphUser.Mail</td></tr>
                 <tr><td class="main-td">Subscription name</td><td>@Model.Subscription.Name</td></tr>
                 <tr><td class="main-td">Plan name</td><td>@planName</td></tr>
