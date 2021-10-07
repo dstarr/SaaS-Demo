@@ -34,8 +34,18 @@ else
                 <tr><td class="main-td">Subscription name</td><td>@Model.Subscription.Name</td></tr>
                 <tr><td class="main-td">Plan name</td><td>@planName</td></tr>
                 <tr><td class="main-td">Subscription will auto renew</td><td>@Model.Subscription.AutoRenew</td></tr>
-                <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate.Value.DateTime.ToShortDateString()</td></tr>
-                <tr><td class="main-td">Term End Date</td><td>@Model.Subscription.Term.EndDate.Value.DateTime.ToShortDateString()</td></tr>
+            
+                @if (Model.Subscription.Term.StartDate != null)
+                {
+                    <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate.Value.DateTime.ToShortDateString()</td></tr>
+
+                }
+
+                @if (Model.Subscription.Term.EndDate != null)
+                {
+                    <tr><td class="main-td">Term End Date</td><td>@Model.Subscription.Term.EndDate.Value.DateTime.ToShortDateString()</td></tr>
+                }
+
                 <tr><td class="main-td">Subscription State</td><td>@Model.Subscription.SaasSubscriptionStatus.Value</td></tr>
                 <tr><td class="main-td">Tenant ID</td><td>@Model.Subscription.Beneficiary.TenantId</td></tr>
             </tbody>
