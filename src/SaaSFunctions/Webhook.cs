@@ -17,19 +17,20 @@ namespace SaaSFunctions
             ILogger log)
         {
             log.LogInformation("===================================");
-            log.LogInformation("WEBHOOK FUNCTION FIRING");
-            log.LogInformation("===================================");
+            log.LogInformation("SaaS WEBHOOK FUNCTION FIRING");
+            log.LogInformation("-----------------------------------");
             
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
-            string responseMessage = string.IsNullOrEmpty(data.ToString())
-                ? "This HTTP triggered function executed successfully but no JSON POST body was sent."
+            string logMessage = string.IsNullOrEmpty(data.ToString())
+                ? "No POST body JSON was received."
                 : data.ToString();
 
-            log.LogInformation(responseMessage);
+            log.LogInformation(logMessage);
+            log.LogInformation("===================================");
 
-            return new OkObjectResult(responseMessage);
+            return new OkResult();
         }
     }
 }
