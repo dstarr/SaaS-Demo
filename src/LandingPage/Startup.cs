@@ -58,8 +58,6 @@ namespace LandingPage
                     options.TokenValidationParameters.ValidIssuer = $"https://sts.windows.net/{this.Configuration["MarketplaceApi:TenantId"]}/";
                 });
 
-
-
             // add the marketplace client to services
             ConfigureMarketplaceServices(services);
 
@@ -104,7 +102,6 @@ namespace LandingPage
                 endpoints.MapRazorPages();
             });
         }
-        
 
         private void ConfigureMarketplaceServices(IServiceCollection services)
         {
