@@ -10,16 +10,6 @@
 }
 else
 {
-    var planName = string.Empty;
-
-    @foreach (var plan in Model.SubscriptionPlans.Plans)
-    {
-        @if (@plan.PlanId == Model.Subscription.PlanId)
-        {
-            planName = plan.DisplayName;
-        }
-    }
-
     <div class="main-content">
 
         <h3>Thank you for your subscription</h3>
@@ -29,25 +19,12 @@ else
 
         <table class="main-table">
             <tbody>
-                <tr><td class="main-td">Current user</td><td>@Model.GraphUser.DisplayName</td></tr>
-                <tr><td class="main-td">Email</td><td>@Model.GraphUser.Mail</td></tr>
-                <tr><td class="main-td">Subscription name</td><td>@Model.Subscription.Name</td></tr>
-                <tr><td class="main-td">Plan name</td><td>@planName</td></tr>
-                <tr><td class="main-td">Subscription will auto renew</td><td>@Model.Subscription.AutoRenew</td></tr>
-            
-                @if (Model.Subscription.Term.StartDate != null)
-                {
-                    <tr><td class="main-td">Term Start Date</td><td>@Model.Subscription.Term.StartDate.Value.DateTime.ToShortDateString()</td></tr>
-
-                }
-
-                @if (Model.Subscription.Term.EndDate != null)
-                {
-                    <tr><td class="main-td">Term End Date</td><td>@Model.Subscription.Term.EndDate.Value.DateTime.ToShortDateString()</td></tr>
-                }
-
-                <tr><td class="main-td">Subscription State</td><td>@Model.Subscription.SaasSubscriptionStatus.Value</td></tr>
-                <tr><td class="main-td">Tenant ID</td><td>@Model.Subscription.Beneficiary.TenantId</td></tr>
+                <tr><td class="main-td">Current user</td><td>@Model.DisplayName</td></tr>
+                <tr><td class="main-td">Email</td><td>@Model.Email</td></tr>
+                <tr><td class="main-td">Subscription name</td><td>@Model.SubscriptionName</td></tr>
+                <tr><td class="main-td">Plan name</td><td>@Model.PlanName</td></tr>
+                <tr><td class="main-td">Subscription State</td><td>@Model.FulfillmentStatus</td></tr>
+                <tr><td class="main-td">Tenant ID</td><td>@Model.TenantId</td></tr>
             </tbody>
         </table>
 
@@ -56,20 +33,19 @@ else
 
         <div style="text-align: left">
             <ul>
-                @if (Model.Subscription.SaasSubscriptionStatus.Value == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.PendingFulfillmentStart)
+                @if (Model.FulfillmentStatus == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.PendingFulfillmentStart)
                 {
                     <li>
                         @Html.ActionLink("Notify pubisher to activate account", "Index", "Submit")
                     </li>
                 }
                 
-                @if (Model.Subscription.SaasSubscriptionStatus.Value == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.Subscribed)
+                @if (Model.FulfillmentStatus == Microsoft.Marketplace.SaaS.Models.SubscriptionStatusEnum.Subscribed)
                 {
                     <li>
-                        @Html.ActionLink("Unsubscribe", "Index", "Unsubscribe", new { id = Model.Subscription.Id })
+                        @Html.ActionLink("Unsubscribe", "Index", "Unsubscribe", new { id = Model.SubscriptionId })
                     </li>
                 }
-
             </ul>
         </div>
 

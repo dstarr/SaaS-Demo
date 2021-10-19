@@ -45,19 +45,34 @@ namespace LandingPage.Controllers
 
             // resolve the subscription using the marketplace purchase id token
             var resolvedSubscription = (await _marketplaceSaaSClient.Fulfillment.ResolveAsync(token, cancellationToken: cancellationToken)).Value;
+            
+            // get the plans on this subscription
             var subscriptionPlans = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(resolvedSubscription.Id.Value, cancellationToken: cancellationToken)).Value;
+
+            // find the plan that goes with this purchase
+            string planName = string.Empty;
+            foreach (var plan in subscriptionPlans.Plans)
+            {
+                if (plan.PlanId == resolvedSubscription.Subscription.PlanId)
+                {
+                    planName = plan.DisplayName;
+                }
+            }
 
             // get graph current user data
             var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
 
             // build the model
-            var model = new IndexViewModel()
+            var model = new IndexViewModel
             {
-                PurchaseIdToken = token,
-                UserClaims = this.User.Claims,
-                GraphUser = graphApiUser,
-                Subscription = resolvedSubscription.Subscription,
-                SubscriptionPlans = subscriptionPlans
+                DisplayName = graphApiUser.DisplayName,
+                Email = graphApiUser.Mail,
+                SubscriptionName = resolvedSubscription.SubscriptionName,
+                FulfillmentStatus = resolvedSubscription.Subscription.SaasSubscriptionStatus.GetValueOrDefault(),
+                PlanName = planName,
+                SubscriptionId = resolvedSubscription.Id.ToString(),
+                TenantId = resolvedSubscription.Subscription.Beneficiary.TenantId.ToString(),
+                PurchaseIdToken = token
             };
 
             return View(model);
