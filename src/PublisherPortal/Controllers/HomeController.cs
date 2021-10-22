@@ -38,25 +38,8 @@ namespace PubisherPortal.Controllers
         public async Task<IActionResult> IndexAsync(CancellationToken cancellationToken)
         {
             IList<Subscription> subscriptionsList = new List<Subscription>();
-            AsyncPageable<Subscription> subscriptions = null;
-
-            try
-            {
-                subscriptions = _marketplaceSaaSClient.Fulfillment.ListSubscriptionsAsync(cancellationToken: cancellationToken);
-
-            }
-            catch (Exception e)
-            {
-                ErrorViewModel errorViewModel = new ErrorViewModel()
-                {
-                    Exception = e,
-                    ShowException = true,
-                    Message = "ListSubscriptionsAsync"
-                };
-
-                return this.Error(errorViewModel);
-            }
-
+            
+            var subscriptions = _marketplaceSaaSClient.Fulfillment.ListSubscriptionsAsync(cancellationToken: cancellationToken);
 
             await foreach (var subscription in subscriptions)
             {
