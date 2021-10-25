@@ -1,14 +1,15 @@
-name: Build and deploy .NET Core Function App to Azure functions app
+name: Build and deploy Function App saasdemo-func
 on:
   push:
     branches:
     - main
 env:
   AZURE_FUNCTIONAPP_NAME: saasdemo-func
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: SaaSFunctions/publish
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: SaaSFunctions/published
   CONFIGURATION: Release
-  DOTNET_CORE_VERSION: 6.0.x
+  DOTNET_CORE_VERSION: 5.0.x
   WORKING_DIRECTORY: src/SaaSFunctions
+  DOTNET_CORE_VERSION_INPROC: ''
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -18,6 +19,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+    - name: Setup .NET Core (for inproc extensions)
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION_INPROC }}
     - name: Restore
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Build
@@ -28,5 +33,5 @@ jobs:
       uses: Azure/functions-action@v1
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        publish-profile: ${{ secrets.saasdemo_func_990b }}
+        publish-profile: ${{ secrets.SAASDEMO_FUNC_FFFF }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
