@@ -1,4 +1,4 @@
-name: Build and deploy .NET Core application to Function App saasdemo-func
+name: Build and deploy webhook function
 on:
   push:
     branches:
