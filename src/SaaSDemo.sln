@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31717.71
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LandingPage", "LandingPage\LandingPage.csproj", "{053A9182-7AB4-4F65-A450-439FEC3C94CC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublisherPortal", "PublisherPortal\PublisherPortal.csproj", "{6A09F38A-D079-4C75-BB26-D891CF87EB52}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SaaSFunctions", "SaaSFunctions\SaaSFunctions.csproj", "{A2A831BF-5A7B-4FF2-A93B-786C4E1A55CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebhookFunc", "WebhookFunc\WebhookFunc.csproj", "{802D9055-1AC1-4357-A7FF-0EA2A77E0096}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{6A09F38A-D079-4C75-BB26-D891CF87EB52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A09F38A-D079-4C75-BB26-D891CF87EB52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A09F38A-D079-4C75-BB26-D891CF87EB52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A2A831BF-5A7B-4FF2-A93B-786C4E1A55CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A2A831BF-5A7B-4FF2-A93B-786C4E1A55CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A2A831BF-5A7B-4FF2-A93B-786C4E1A55CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A2A831BF-5A7B-4FF2-A93B-786C4E1A55CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{802D9055-1AC1-4357-A7FF-0EA2A77E0096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{802D9055-1AC1-4357-A7FF-0EA2A77E0096}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{802D9055-1AC1-4357-A7FF-0EA2A77E0096}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{802D9055-1AC1-4357-A7FF-0EA2A77E0096}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
