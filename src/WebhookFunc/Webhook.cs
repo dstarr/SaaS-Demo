@@ -11,21 +11,18 @@ using Newtonsoft.Json;
 namespace WebhookFunc
 {
     public static class Webhook
-{
+    {
         [FunctionName("Webhook")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
             ILogger log,
             ExecutionContext context)
         {
-            log.LogInformation("===================================");
-            log.LogInformation("SaaS WEBHOOK FUNCTION FIRING");
-            log.LogInformation("-----------------------------------");
+            LogHeader(log);
 
-            var passed = CheckSecretString(req, context);
-            if (!passed)
+            if (!RequestIsSecure(req, context))
             {
-                log.LogInformation("Query String check did not pass!");
+                log.LogInformation("Security checks did not pass!");
                 return new StatusCodeResult(403);
             }
 
@@ -36,13 +33,12 @@ namespace WebhookFunc
                 ? "No POST body JSON was received."
                 : data.ToString();
 
-            log.LogInformation(logMessage);
-            log.LogInformation("===================================");
+            LogFooter(log, logMessage);
 
             return new OkResult();
         }
 
-        private static bool CheckSecretString(HttpRequest req, ExecutionContext context)
+        private static bool RequestIsSecure(HttpRequest req, ExecutionContext context)
         {
             // set up the configuration
             var config = new ConfigurationBuilder()
@@ -51,16 +47,27 @@ namespace WebhookFunc
                 .AddEnvironmentVariables()
                 .Build();
 
-            // get the env:Variables
-            var secretKey = config["QuerySecret:SecretKey"];
-            var secretValue = config["QuerySecret:SecretValue"];
-
-            // ensure the key/value exists
-            if (req.Query[secretKey].Count != 1)
+            if (!CheckSecretString(req, context, config))
             {
                 return false;
             }
-            
+
+            return true;
+
+        }
+
+        private static bool CheckSecretString(HttpRequest req, ExecutionContext context, IConfigurationRoot config)
+        {
+            // get the env:Variables
+            var secretKey = config["QueryStringSecret:SecretKey"];
+            var secretValue = config["QueryStringSecret:SecretValue"];
+
+            // ensure the key/value exists
+            if (req.Query[secretKey].Count == 0)
+            {
+                return false;
+            }
+
             // look for a match on the SecretValue
             var token = req.Query[secretKey][0];
             if (secretValue != token)
@@ -70,5 +77,19 @@ namespace WebhookFunc
 
             return true;
         }
-}
+
+        private static void LogFooter(ILogger log, string logMessage)
+        {
+            log.LogInformation(logMessage);
+            log.LogInformation("===================================");
+        }
+
+        private static void LogHeader(ILogger log)
+        {
+            log.LogInformation("===================================");
+            log.LogInformation("SaaS WEBHOOK FUNCTION FIRING");
+            log.LogInformation("-----------------------------------");
+        }
+
+    }
 }
