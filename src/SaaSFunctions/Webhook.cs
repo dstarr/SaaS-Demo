@@ -71,8 +71,6 @@ namespace SaasFunctions
         {
             string authHeader = request.Headers["Authorization"];
 
-            if (authHeader == null) return false;
-
             var jwt = authHeader.Split(' ')[1];
             var handler = new JwtSecurityTokenHandler();
 
@@ -88,6 +86,8 @@ namespace SaasFunctions
             {
                 Console.WriteLine($"{claim.Type} : {claim.Value}");
             }
+
+
 
             return true;
         }
