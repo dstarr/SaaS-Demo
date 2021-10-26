@@ -1,4 +1,9 @@
+using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -47,7 +52,12 @@ namespace WebhookFunc
                 .AddEnvironmentVariables()
                 .Build();
 
-            if (!CheckSecretString(req, context, config))
+            if (!QueryStringIsValid(req, context, config))
+            {
+                return false;
+            }
+
+            if (!ClaimsAreValid(req))
             {
                 return false;
             }
@@ -56,7 +66,26 @@ namespace WebhookFunc
 
         }
 
-        private static bool CheckSecretString(HttpRequest req, ExecutionContext context, IConfigurationRoot config)
+        private static bool ClaimsAreValid(HttpRequest request)
+        {
+            string authHeader = request.Headers["Authorization"];
+
+            if (authHeader == null) return false;
+
+            var jwt = authHeader.Split(' ')[1];
+            var payload = jwt.Split('.')[1];
+            Console.WriteLine(payload);
+
+
+            //var bytes = Convert.FromBase64String(payload);
+            //var payloadJson = Encoding.UTF8.GetString(bytes);
+
+            //Console.WriteLine(payloadJson);
+
+            return true;
+        }
+
+        private static bool QueryStringIsValid(HttpRequest req, ExecutionContext context, IConfigurationRoot config)
         {
             // get the env:Variables
             var secretKey = config["QueryStringSecret:SecretKey"];
