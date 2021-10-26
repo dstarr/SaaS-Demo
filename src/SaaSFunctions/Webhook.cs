@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SaasFunctions
 {
@@ -24,7 +26,7 @@ namespace SaasFunctions
         {
             LogHeader(log);
 
-            if (!RequestIsSecure(req, context))
+            if (!RequestIsSecure(req, context, log))
             {
                 log.LogInformation("Security checks did not pass!");
                 return new StatusCodeResult(403);
@@ -42,7 +44,7 @@ namespace SaasFunctions
             return new OkResult();
         }
 
-        private static bool RequestIsSecure(HttpRequest req, ExecutionContext context)
+        private static bool RequestIsSecure(HttpRequest req, ExecutionContext context, ILogger log)
         {
             // set up the configuration
             var config = new ConfigurationBuilder()
@@ -56,7 +58,7 @@ namespace SaasFunctions
                 return false;
             }
 
-            if (!ClaimsAreValid(req))
+            if (!ClaimsAreValid(req, log))
             {
                 return false;
             }
@@ -65,21 +67,27 @@ namespace SaasFunctions
 
         }
 
-        private static bool ClaimsAreValid(HttpRequest request)
+        private static bool ClaimsAreValid(HttpRequest request, ILogger log)
         {
             string authHeader = request.Headers["Authorization"];
 
             if (authHeader == null) return false;
 
             var jwt = authHeader.Split(' ')[1];
-            var payload = jwt.Split('.')[1];
-            Console.WriteLine(payload);
+            var handler = new JwtSecurityTokenHandler();
 
+            if (!handler.CanReadToken(jwt))
+            {
+                log.LogInformation("Can't read JWT");
+                return false;
+            }
 
-            var bytes = Convert.FromBase64String(payload);
-            var payloadJson = Encoding.UTF8.GetString(bytes);
+            var jwtToken = handler.ReadToken(jwt) as JwtSecurityToken;
 
-            Console.WriteLine(payloadJson);
+            foreach (var claim in jwtToken.Claims)
+            {
+                Console.WriteLine($"{claim.Type} : {claim.Value}");
+            }
 
             return true;
         }

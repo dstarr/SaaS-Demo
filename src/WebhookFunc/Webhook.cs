@@ -25,7 +25,7 @@ namespace WebhookFunc
         {
             LogHeader(log);
 
-            if (!RequestIsSecure(req, context))
+            if (!RequestIsSecure(req, context, log))
             {
                 log.LogInformation("Security checks did not pass!");
                 return new StatusCodeResult(403);
@@ -43,7 +43,7 @@ namespace WebhookFunc
             return new OkResult();
         }
 
-        private static bool RequestIsSecure(HttpRequest req, ExecutionContext context)
+        private static bool RequestIsSecure(HttpRequest req, ExecutionContext context, ILogger log)
         {
             // set up the configuration
             var config = new ConfigurationBuilder()
@@ -57,7 +57,7 @@ namespace WebhookFunc
                 return false;
             }
 
-            if (!ClaimsAreValid(req))
+            if (!ClaimsAreValid(req, log))
             {
                 return false;
             }
@@ -66,21 +66,27 @@ namespace WebhookFunc
 
         }
 
-        private static bool ClaimsAreValid(HttpRequest request)
+        private static bool ClaimsAreValid(HttpRequest request, ILogger log)
         {
             string authHeader = request.Headers["Authorization"];
 
             if (authHeader == null) return false;
 
             var jwt = authHeader.Split(' ')[1];
-            var payload = jwt.Split('.')[1];
-            Console.WriteLine(payload);
+
+            var handler = new JwtSecurityTokenHandler();
+
+            if (!handler.CanReadToken(jwt))
+            {
+                log.LogInformation("Cannot Read JWT");
+                return false;
+            }
+
+            var token = handler.ReadToken(jwt); 
 
 
-            //var bytes = Convert.FromBase64String(payload);
-            //var payloadJson = Encoding.UTF8.GetString(bytes);
 
-            //Console.WriteLine(payloadJson);
+
 
             return true;
         }
