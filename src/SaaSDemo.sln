@@ -7,9 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LandingPage", "LandingPage\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublisherPortal", "PublisherPortal\PublisherPortal.csproj", "{6A09F38A-D079-4C75-BB26-D891CF87EB52}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebhookFunc", "WebhookFunc\WebhookFunc.csproj", "{802D9055-1AC1-4357-A7FF-0EA2A77E0096}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaaSFunctions", "SaaSFunctions\SaaSFunctions.csproj", "{2F241794-E1EB-438F-84A7-BFC961434470}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SaaSFunctions", "SaaSFunctions\SaaSFunctions.csproj", "{2F241794-E1EB-438F-84A7-BFC961434470}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		{6A09F38A-D079-4C75-BB26-D891CF87EB52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A09F38A-D079-4C75-BB26-D891CF87EB52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A09F38A-D079-4C75-BB26-D891CF87EB52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{802D9055-1AC1-4357-A7FF-0EA2A77E0096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{802D9055-1AC1-4357-A7FF-0EA2A77E0096}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{802D9055-1AC1-4357-A7FF-0EA2A77E0096}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{802D9055-1AC1-4357-A7FF-0EA2A77E0096}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F241794-E1EB-438F-84A7-BFC961434470}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F241794-E1EB-438F-84A7-BFC961434470}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F241794-E1EB-438F-84A7-BFC961434470}.Release|Any CPU.ActiveCfg = Release|Any CPU
