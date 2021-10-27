@@ -14,6 +14,15 @@ namespace SaasFunctions
 {
     public static class Webhook
     {
+        /// <summary>
+        /// This function is called by Azure to execute the function. 
+        /// It is called by Azure when an event occurs on a subscription in the Azure marketplace.
+        /// It needs to be configured in Partner Center to be called by Azure marketplace.
+        /// </summary>
+        /// <param name="req">HttpRequest</param>
+        /// <param name="log">ILogger</param>
+        /// <param name="context">ExecutionContext</param>
+        /// <returns></returns>
         [FunctionName("Webhook")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
