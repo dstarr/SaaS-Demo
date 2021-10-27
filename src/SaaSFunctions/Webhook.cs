@@ -1,9 +1,5 @@
-using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -13,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
+using System;
 
 namespace SaasFunctions
 {
@@ -36,6 +32,8 @@ namespace SaasFunctions
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
+            LogAction(data, log);
+
             string logMessage = string.IsNullOrEmpty(data.ToString())
                 ? "No POST body JSON was received."
                 : data.ToString();
@@ -45,6 +43,7 @@ namespace SaasFunctions
             return new OkResult();
         }
 
+        
         private static bool RequestIsSecure(HttpRequest req, ExecutionContext context, ILogger log)
         {
             // set up the configuration
@@ -70,6 +69,13 @@ namespace SaasFunctions
 
         }
 
+        /// <summary>
+        /// Checks that JWT claims are valid
+        /// </summary>
+        /// <param name="request">HttpRequest</param>
+        /// <param name="config">IConfiguration</param>
+        /// <param name="log">ILogger</param>
+        /// <returns></returns>
         private static bool ClaimsAreValid(HttpRequest request, IConfigurationRoot config, ILogger log)
         {
             string authHeader = request.Headers["Authorization"];
@@ -111,6 +117,14 @@ namespace SaasFunctions
             return true;
         }
 
+        /// <summary>
+        /// Checks that the secret on the querystring is present and correct
+        /// </summary>
+        /// <param name="req">HttpRequest</param>
+        /// <param name="context">ExecutionContext</param>
+        /// <param name="config">IConfigurationRoot</param>
+        /// <param name="log">ILogger</param>
+        /// <returns></returns>
         private static bool QueryStringIsValid(HttpRequest req, ExecutionContext context, IConfigurationRoot config, ILogger log)
         {
             // get the env:Variables
@@ -147,6 +161,14 @@ namespace SaasFunctions
             log.LogInformation(logMessage);
             log.LogInformation("===================================");
         }
+
+        private static void LogAction(dynamic data, ILogger log)
+        {
+            var action = data.action;
+            log.LogInformation($"ACTION: {action}");
+            log.LogInformation("-----------------------------------");
+        }
+
 
     }
 }
