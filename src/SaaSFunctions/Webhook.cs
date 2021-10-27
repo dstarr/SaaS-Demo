@@ -22,7 +22,7 @@ namespace SaasFunctions
         /// <param name="req">HttpRequest</param>
         /// <param name="log">ILogger</param>
         /// <param name="context">ExecutionContext</param>
-        /// <returns></returns>
+        /// <returns>Task<IActionResult></returns>
         [FunctionName("Webhook")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
@@ -57,7 +57,7 @@ namespace SaasFunctions
         /// <param name="req">HttpRequest</param>
         /// <param name="context">ExecutionCOntext</param>
         /// <param name="log">ILogger</param>
-        /// <returns></returns>
+        /// <returns>bool indicating if the request is secure</returns>
         private static bool RequestIsSecure(HttpRequest req, ExecutionContext context, ILogger log)
         {
             // set up the configuration
@@ -89,7 +89,7 @@ namespace SaasFunctions
         /// <param name="request">HttpRequest</param>
         /// <param name="config">IConfiguration</param>
         /// <param name="log">ILogger</param>
-        /// <returns></returns>
+        /// <returns>A bool indicating if the Claims in the JWT are valid.</returns>
         private static bool ClaimsAreValid(HttpRequest request, IConfigurationRoot config, ILogger log)
         {
             string authHeader = request.Headers["Authorization"];
@@ -138,7 +138,7 @@ namespace SaasFunctions
         /// <param name="context">ExecutionContext</param>
         /// <param name="config">IConfigurationRoot</param>
         /// <param name="log">ILogger</param>
-        /// <returns></returns>
+        /// <returns>A bool indicating if the querystring is valid.</returns>
         private static bool QueryStringIsValid(HttpRequest req, ExecutionContext context, IConfigurationRoot config, ILogger log)
         {
             // get the env:Variables
