@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -53,13 +54,15 @@ namespace SaasFunctions
                 .AddEnvironmentVariables()
                 .Build();
 
-            if (!QueryStringIsValid(req, context, config))
+            if (!QueryStringIsValid(req, context, config, log))
             {
+                log.LogInformation("Querystring is invalid.");
                 return false;
             }
 
-            if (!ClaimsAreValid(req, log))
+            if (!ClaimsAreValid(req, config, log))
             {
+                log.LogInformation("Claims are invalid.");
                 return false;
             }
 
@@ -67,7 +70,7 @@ namespace SaasFunctions
 
         }
 
-        private static bool ClaimsAreValid(HttpRequest request, ILogger log)
+        private static bool ClaimsAreValid(HttpRequest request, IConfigurationRoot config, ILogger log)
         {
             string authHeader = request.Headers["Authorization"];
 
@@ -82,17 +85,33 @@ namespace SaasFunctions
 
             var jwtToken = handler.ReadToken(jwt) as JwtSecurityToken;
 
-            foreach (var claim in jwtToken.Claims)
+            var appId = jwtToken.Claims.FirstOrDefault(c => c.Type == "appid").Value;
+            var tenantId = jwtToken.Claims.FirstOrDefault(c => c.Type == "tid").Value;
+            var issuer = jwtToken.Claims.FirstOrDefault(c => c.Type == "iss").Value;
+
+            if (appId != config["Auth:ApplicationId"])
             {
-                Console.WriteLine($"{claim.Type} : {claim.Value}");
+                log.LogInformation("Application ID does not match.");
+                return false;
             }
 
+            if (tenantId != config["Auth:TenantId"])
+            {
+                log.LogInformation("Tenant ID does not match.");
+                return false;
+            }
 
+            var validIssuer = $"https://sts.windows.net/{tenantId}/";
+            if (validIssuer != issuer)
+            {
+                log.LogInformation("Issuer does not match.");
+                return false;
+            }
 
             return true;
         }
 
-        private static bool QueryStringIsValid(HttpRequest req, ExecutionContext context, IConfigurationRoot config)
+        private static bool QueryStringIsValid(HttpRequest req, ExecutionContext context, IConfigurationRoot config, ILogger log)
         {
             // get the env:Variables
             var secretKey = config["QueryStringSecret:SecretKey"];
@@ -101,6 +120,7 @@ namespace SaasFunctions
             // ensure the key/value exists
             if (req.Query[secretKey].Count == 0)
             {
+                log.LogInformation("No secret key on query string.");
                 return false;
             }
 
@@ -108,16 +128,11 @@ namespace SaasFunctions
             var token = req.Query[secretKey][0];
             if (secretValue != token)
             {
+                log.LogInformation("Wrong secret key on query string.");
                 return false;
             }
 
             return true;
-        }
-
-        private static void LogFooter(ILogger log, string logMessage)
-        {
-            log.LogInformation(logMessage);
-            log.LogInformation("===================================");
         }
 
         private static void LogHeader(ILogger log)
@@ -125,6 +140,12 @@ namespace SaasFunctions
             log.LogInformation("===================================");
             log.LogInformation("SaaS WEBHOOK FUNCTION FIRING");
             log.LogInformation("-----------------------------------");
+        }
+
+        private static void LogFooter(ILogger log, string logMessage)
+        {
+            log.LogInformation(logMessage);
+            log.LogInformation("===================================");
         }
 
     }
