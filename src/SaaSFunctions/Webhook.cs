@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
-using System;
 
 namespace SaasFunctions
 {
@@ -43,7 +42,13 @@ namespace SaasFunctions
             return new OkResult();
         }
 
-        
+        /// <summary>
+        /// Calls functions that check various security aspects of this webhook
+        /// </summary>
+        /// <param name="req">HttpRequest</param>
+        /// <param name="context">ExecutionCOntext</param>
+        /// <param name="log">ILogger</param>
+        /// <returns></returns>
         private static bool RequestIsSecure(HttpRequest req, ExecutionContext context, ILogger log)
         {
             // set up the configuration
