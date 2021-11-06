@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 
 namespace SaasFunctions
 {
@@ -19,9 +20,8 @@ namespace SaasFunctions
         private static ExecutionContext _executionContext = null;
 
         /// <summary>
-        /// This function is called by Azure to execute the function. 
-        /// It is called by Azure when an event occurs on a subscription in the Azure marketplace.
-        /// It needs to be configured in Partner Center to be called by Azure marketplace.
+        /// This function is called by Azure when an event occurs on a subscription in the Azure marketplace.
+        /// It needs to be configured in Partner Center to be called by the Azure marketplace.
         /// </summary>
         /// <param name="req">HttpRequest</param>
         /// <param name="log">ILogger</param>
@@ -33,31 +33,62 @@ namespace SaasFunctions
             ILogger log,
             ExecutionContext context)
         {
-
             _request = req;
             _logger = log;
             _executionContext = context;
 
-            LogHeader();
+            PrintLogHeader();
 
             if (!RequestIsSecure())
             {
                 _logger.LogInformation("Security checks did not pass!");
-                return new StatusCodeResult(403);
+                return new StatusCodeResult((int)HttpStatusCode.Forbidden);
             }
 
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
-            LogAction(data);
+            if (!SubscriptionEventIsValid(data))
+            {
+                _logger.LogInformation("Event informtion was invalid!");
+                return new StatusCodeResult((int)HttpStatusCode.Conflict);
+            }
+
+            PrintLogAction(data);
 
             string logMessage = string.IsNullOrEmpty(data.ToString())
                 ? "No POST body JSON was received."
                 : data.ToString();
 
-            LogFooter(logMessage);
+            PrintLogFooter(logMessage);
 
             return new OkResult();
+        }
+
+        /// <summary>
+        /// Check the event actully occured
+        /// </summary>
+        /// <param name="data">the JSON paylod s a dynamic value</param>
+        /// <returns>Whether of the the reported event is a valid one</returns>
+        private static bool SubscriptionEventIsValid(dynamic data)
+        {
+            switch (data.action)
+            {
+                case "Unsubscribed":
+                    // 1. Use the SaaS Fulfillment API to fetch the relevant subscription
+                    // 2. Check the subscription's "saasSubscriptionStatus": "Unsubscribed"
+                    // 3. Return false on unexpected result
+                    break;
+
+                case "ChangePlan":
+                    // 1. Use the SaaS Operation API to validate a ChangePlan has been requested
+                    // 2. return false on unexpected result
+                    break;
+
+                // etc.
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -116,12 +147,17 @@ namespace SaasFunctions
             if (appId != config["Auth:ApplicationId"])
             {
                 _logger.LogInformation("Application ID does not match.");
+                _logger.LogInformation($"Configured Application ID: {config["Auth:ApplicationId"]}");
+                _logger.LogInformation($"Received Application ID: {appId}");
+
                 return false;
             }
 
             if (tenantId != config["Auth:TenantId"])
             {
                 _logger.LogInformation("Tenant ID does not match.");
+                _logger.LogInformation($"Configured Tenant ID: {config["Auth:ApplicationId"]}");
+                _logger.LogInformation($"Received Tenant ID: {tenantId}");
                 return false;
             }
 
@@ -150,6 +186,7 @@ namespace SaasFunctions
             if (_request.Query[secretKey].Count == 0)
             {
                 _logger.LogInformation("No secret key on query string.");
+                _logger.LogInformation($"Expected: {secretKey}");
                 return false;
             }
 
@@ -157,27 +194,29 @@ namespace SaasFunctions
             var token = _request.Query[secretKey][0];
             if (secretValue != token)
             {
-                _logger.LogInformation("Wrong secret key on query string.");
+                _logger.LogInformation("Wrong secret value on query string.");
+                _logger.LogInformation($"Expected: {secretValue}");
+
                 return false;
             }
 
             return true;
         }
 
-        private static void LogHeader()
+        private static void PrintLogHeader()
         {
             _logger.LogInformation("===================================");
             _logger.LogInformation("SaaS WEBHOOK FUNCTION FIRING");
             _logger.LogInformation("-----------------------------------");
         }
 
-        private static void LogFooter(string logMessage)
+        private static void PrintLogFooter(string logMessage)
         {
             _logger.LogInformation(logMessage);
             _logger.LogInformation("===================================");
         }
 
-        private static void LogAction(dynamic data)
+        private static void PrintLogAction(dynamic data)
         {
             var action = data.action;
             _logger.LogInformation($"ACTION: {action}");
