@@ -37,7 +37,7 @@ namespace SaasFunctions
             _logger = log;
             _executionContext = context;
 
-            PrintLogHeader();
+            PrintToLogHeader();
 
             if (!RequestIsSecure())
             {
@@ -54,41 +54,9 @@ namespace SaasFunctions
                 return new StatusCodeResult((int)HttpStatusCode.Conflict);
             }
 
-            PrintLogAction(data);
-
-            string logMessage = string.IsNullOrEmpty(data.ToString())
-                ? "No POST body JSON was received."
-                : data.ToString();
-
-            PrintLogFooter(logMessage);
+            PrintToLogPayload(data);
 
             return new OkResult();
-        }
-
-        /// <summary>
-        /// Check the event actully occured
-        /// </summary>
-        /// <param name="data">the JSON paylod s a dynamic value</param>
-        /// <returns>Whether of the the reported event is a valid one</returns>
-        private static bool SubscriptionEventIsValid(dynamic data)
-        {
-            switch (data.action)
-            {
-                case "Unsubscribed":
-                    // 1. Use the SaaS Fulfillment API to fetch the relevant subscription
-                    // 2. Check the subscription's "saasSubscriptionStatus": "Unsubscribed"
-                    // 3. Return false on unexpected result
-                    break;
-
-                case "ChangePlan":
-                    // 1. Use the SaaS Operation API to validate a ChangePlan has been requested
-                    // 2. return false on unexpected result
-                    break;
-
-                // etc.
-            }
-
-            return true;
         }
 
         /// <summary>
@@ -203,26 +171,45 @@ namespace SaasFunctions
             return true;
         }
 
-        private static void PrintLogHeader()
+        /// <summary>
+        /// Check the event actully occured
+        /// </summary>
+        /// <param name="data">the JSON paylod s a dynamic value</param>
+        /// <returns>Whether of the the reported event is a valid one</returns>
+        private static bool SubscriptionEventIsValid(dynamic data)
+        {
+            switch (data.action)
+            {
+                case "Unsubscribed":
+                    // 1. Use the SaaS Fulfillment API to fetch the relevant subscription
+                    // 2. Check the subscription's "saasSubscriptionStatus": "Unsubscribed"
+                    // 3. Return false on unexpected result
+                    break;
+
+                case "ChangePlan":
+                    // 1. Use the SaaS Operation API to validate a ChangePlan has been requested
+                    // 2. return false on unexpected result
+                    break;
+
+                // etc.
+            }
+
+            return true;
+        }
+
+        private static void PrintToLogHeader()
         {
             _logger.LogInformation("===================================");
             _logger.LogInformation("SaaS WEBHOOK FUNCTION FIRING");
             _logger.LogInformation("-----------------------------------");
         }
 
-        private static void PrintLogFooter(string logMessage)
+        private static void PrintToLogPayload(dynamic data)
         {
-            _logger.LogInformation(logMessage);
+            _logger.LogInformation($"ACTION: {data.action}");
+            _logger.LogInformation("-----------------------------------");
+            _logger.LogInformation((string)data.ToString());
             _logger.LogInformation("===================================");
         }
-
-        private static void PrintLogAction(dynamic data)
-        {
-            var action = data.action;
-            _logger.LogInformation($"ACTION: {action}");
-            _logger.LogInformation("-----------------------------------");
-        }
-
-
     }
 }
