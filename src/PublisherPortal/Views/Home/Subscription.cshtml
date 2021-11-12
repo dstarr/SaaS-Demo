@@ -44,16 +44,18 @@ else
         <ul>
             @foreach (var plan in Model.Plans)
             {
-                <li>
-                    @plan.DisplayName
-                    
-                    @if (plan.PlanId == Model.Subscription.PlanId)
-                    {
-                        @Html.Raw("- <b>Current Plan</b>")
-                    }
+                if ((bool)!plan.IsStopSell)
+                {
+                    <li>
+                        @plan.DisplayName
 
-                </li>
-            
+                        @if (plan.PlanId == Model.Subscription.PlanId)
+                        {
+                            @Html.Raw("- <b>Current Plan</b>")
+                        }
+
+                    </li>
+                }
             }
         </ul>
 
