@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>aspnet-PubisherPortal-E18D968A-EA1F-4EBE-B06F-FBE10F16E157</UserSecretsId>
+    <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>aspnet-PublisherPortal-E18D968A-EA1F-4EBE-B06F-FBE10F16E157</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
