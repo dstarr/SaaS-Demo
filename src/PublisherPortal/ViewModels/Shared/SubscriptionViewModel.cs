@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Marketplace.SaaS.Models;
 
-namespace PublisherPortal.ViewModels.Home;
+namespace PublisherPortal.ViewModels.Shared;
 
 public class SubscriptionViewModel
 {

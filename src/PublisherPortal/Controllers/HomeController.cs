@@ -10,6 +10,7 @@ using Microsoft.Marketplace.SaaS;
 using Microsoft.Marketplace.SaaS.Models;
 using PublisherPortal.ViewModels;
 using PublisherPortal.ViewModels.Home;
+using PublisherPortal.ViewModels.Shared;
 
 namespace PublisherPortal.Controllers;
 

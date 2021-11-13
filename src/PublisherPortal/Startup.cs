@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.Marketplace.SaaS;
+using Microsoft.Marketplace.Metering;
 
 namespace PublisherPortal;
 
@@ -45,7 +46,7 @@ public class Startup
             };
         });
 
-        ConfigureMarketplaceServices(services);
+        ConfigureMarketplaceFulfillmentService(services);
 
         services.AddControllersWithViews(options =>
         {
@@ -55,7 +56,7 @@ public class Startup
             options.Filters.Add(new AuthorizeFilter(policy));
         });
 
-        this.ConfigureMarketplaceServices(services);
+        this.ConfigureMarketplaceFulfillmentService(services);
 
         services.AddRazorPages()
             .AddMicrosoftIdentityUI().AddMvcOptions(options => {});
@@ -73,6 +74,7 @@ public class Startup
         else
         {
             app.UseExceptionHandler("/Home/Error");
+
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
@@ -106,7 +108,7 @@ public class Startup
         });
     }
 
-    private void ConfigureMarketplaceServices(IServiceCollection services)
+    private void ConfigureMarketplaceFulfillmentService(IServiceCollection services)
     {
         // get needed arguments from the Configuration in appsettings.json
         // or in the configuration settings in the Web Application
@@ -120,7 +122,13 @@ public class Startup
         // register a MarketplaceSaaaSClient so it can be injected
         services.TryAddScoped<IMarketplaceSaaSClient>(sp =>
         {
+            // ReSharper disable once ConvertToLambdaExpression
             return new MarketplaceSaaSClient(creds);
+        });
+
+        services.TryAddScoped<IMarketplaceMeteringClient>(sp =>
+        {
+            return new MarketplaceMeteringClient(creds);
         });
     }
 }
