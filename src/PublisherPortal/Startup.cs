@@ -27,9 +27,6 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        // services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-        //     .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"));
-
         // Configure AAD and Graph integration
         services.AddMicrosoftIdentityWebAppAuthentication(this.Configuration) // Sign on with AAD
             .EnableTokenAcquisitionToCallDownstreamApi(new string[] { "user.read" }) // Call Graph API
