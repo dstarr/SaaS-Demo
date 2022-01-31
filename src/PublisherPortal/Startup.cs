@@ -46,8 +46,6 @@ public class Startup
             };
         });
 
-        ConfigureMarketplaceFulfillmentService(services);
-
         services.AddControllersWithViews(options =>
         {
             var policy = new AuthorizationPolicyBuilder()
