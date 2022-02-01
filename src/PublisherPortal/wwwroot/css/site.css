@@ -6,6 +6,10 @@ h3 {
     padding-top: 50px;
 }
 
+th {
+    padding-right: 20px;
+}
+
 .plan-table-div {
     padding-top: 30px;
 }

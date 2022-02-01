@@ -45,7 +45,7 @@ public class HomeController : Controller
             subscriptionsList.Add(subscription);
         }
             
-        var model = new IndexViewModel()
+        var model = new ViewModels.Home.IndexViewModel()
         {
             Subscriptions = subscriptionsList.OrderBy(s => s.Name).ToList<Subscription>()
         };

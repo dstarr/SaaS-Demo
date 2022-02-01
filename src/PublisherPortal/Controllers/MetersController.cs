@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Marketplace.Metering;
-using Microsoft.Marketplace.Metering.Models;
 using Microsoft.Marketplace.SaaS;
 using Microsoft.Marketplace.SaaS.Models;
+using PublisherPortal.ViewModels.Meters;
 
 namespace PublisherPortal.Controllers;
 
@@ -36,6 +36,14 @@ public class MetersController : Controller
     {
         var subscription = (await _marketplaceSaaSClient.Fulfillment.GetSubscriptionAsync(id, cancellationToken: cancellationToken)).Value;
 
-        return View();
+        var plans = _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync(subscription.Id.Value, cancellationToken: cancellationToken).Result.Value;
+
+        var viewModel = new IndexViewModel()
+        {
+            Plans = plans.Plans,
+            Subscription = subscription
+        };
+
+        return View(viewModel);
     }
 }
