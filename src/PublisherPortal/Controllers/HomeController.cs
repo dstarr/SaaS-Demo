@@ -38,9 +38,9 @@ public class HomeController : Controller
     /// <returns>IActionResult</returns>
     public async Task<IActionResult> IndexAsync(CancellationToken cancellationToken)
     {
-        var subscriptions = _marketplaceSaaSClient.Fulfillment.ListSubscriptions(cancellationToken: cancellationToken);
-
         var subscriptionViewModels = new List<IndexViewModel>();
+
+        var subscriptions = _marketplaceSaaSClient.Fulfillment.ListSubscriptions(cancellationToken: cancellationToken);
 
         foreach (var subscription in subscriptions)
         {

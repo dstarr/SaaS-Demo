@@ -15,7 +15,7 @@
     var plan = Model?.Plans.SingleOrDefault(p => p.PlanComponents.MeteringDimensions.Count > 0 && p.PlanId == Model.Subscription.PlanId);
     
     <div>
-        <h3>Plan: plan.DisplayName</h3>
+        <h3>Plan: @plan.DisplayName</h3>
 
 
         @foreach (var dimension in plan.PlanComponents.MeteringDimensions)
