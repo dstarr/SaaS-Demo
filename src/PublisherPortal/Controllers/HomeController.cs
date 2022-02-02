@@ -49,7 +49,7 @@ public class HomeController : Controller
             var model = new IndexViewModel()
             {
                 Subscription = subscription,
-                HasMeters = plansList.Plans.Any(p => p.PlanComponents.MeteringDimensions.Count > 0)
+                HasMeters = plansList.Plans.Any(p => p.PlanComponents.MeteringDimensions.Count > 0 && p.PlanId == subscription.PlanId)
             };
 
             subscriptionViewModels.Add(model);
