@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Graph;
 using Microsoft.Marketplace.SaaS;
 using Microsoft.Marketplace.SaaS.Models;
 using PublisherPortal.ViewModels;
 using PublisherPortal.ViewModels.Home;
 using PublisherPortal.ViewModels.Shared;
+using Subscription = Microsoft.Marketplace.SaaS.Models.Subscription;
 
 namespace PublisherPortal.Controllers;
 
@@ -36,21 +38,25 @@ public class HomeController : Controller
     /// <returns>IActionResult</returns>
     public async Task<IActionResult> IndexAsync(CancellationToken cancellationToken)
     {
-        IList<Subscription> subscriptionsList = new List<Subscription>();
-            
-        var subscriptions = _marketplaceSaaSClient.Fulfillment.ListSubscriptionsAsync(cancellationToken: cancellationToken);
+        var subscriptions = _marketplaceSaaSClient.Fulfillment.ListSubscriptions(cancellationToken: cancellationToken);
 
-        await foreach (var subscription in subscriptions)
+        var subscriptionViewModels = new List<IndexViewModel>();
+
+        foreach (var subscription in subscriptions)
         {
-            subscriptionsList.Add(subscription);
+            var plansList = (await _marketplaceSaaSClient.Fulfillment.ListAvailablePlansAsync((Guid)subscription.Id, cancellationToken: cancellationToken)).Value;
+
+            var model = new IndexViewModel()
+            {
+                Subscription = subscription,
+                HasMeters = plansList.Plans.Any(p => p.PlanComponents.MeteringDimensions.Count > 0)
+            };
+
+            subscriptionViewModels.Add(model);
+
         }
             
-        var model = new ViewModels.Home.IndexViewModel()
-        {
-            Subscriptions = subscriptionsList.OrderBy(s => s.Name).ToList<Subscription>()
-        };
-
-        return View(model);
+        return View(subscriptionViewModels);
     }
 
     /// <summary>

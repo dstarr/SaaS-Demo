@@ -1,4 +1,4 @@
-﻿@using Microsoft.Marketplace.SaaS.Models;
+﻿@using Microsoft.Marketplace.SaaS.Models
 @model PublisherPortal.ViewModels.Meters.IndexViewModel;
 
 @{
@@ -9,44 +9,39 @@
 
 <p>Use this page to manually invoke a metered billing event.</p>
 
-<h3>Subscription: @Model?.Subscription.Name</h3>
+<h2>Subscription: @Model?.Subscription.Name</h2>
 
-
-<table class="main-table table-striped">
-
-    <thead>
-    <tr>
-        <th>Plan Name</th>
-        <th>Meter Name</th>
-        <th>Meter ID</th>
-        <th>Price Per Unit</th>
-        <th>Quantity</th>
-        <th>&nbsp;</th>
-    </tr>
-    </thead>
-    <tbody>
-        @foreach (var plan in Model?.Plans!)
-{
+@{
+    var plan = Model?.Plans.SingleOrDefault(p => p.PlanComponents.MeteringDimensions.Count > 0 && p.PlanId == Model.Subscription.PlanId);
     
-        @if (plan.PlanComponents.MeteringDimensions.Count > 0)
+    <div>
+        <h3>Plan: plan.DisplayName</h3>
+
+
+        @foreach (var dimension in plan.PlanComponents.MeteringDimensions)
         {
-            <tr><td colspan="5">@plan.DisplayName</td></tr>
+            <form method="post">
 
-            @foreach (var dimension in plan.PlanComponents.MeteringDimensions)
-            {
-                    
-                <tr>
-                    <td></td>
-                    <td>@dimension.DisplayName</td>
-                    <td>@dimension.Id</td>
-                    <td style="text-align: center;">@dimension.PricePerUnit</td>
-                    <td><input type="text" size="4" /></td>
-                    <td><input type="button" value="Submit" /></td>
-                </tr>
+                <input type="hidden" name="id" value="@Model.Subscription.Id" />
+                <input type="hidden" name="planId" value="@plan.PlanId" />
+                <input type="hidden" name="dimensionId" value="@dimension.Id" />
 
-            }
+                <table>
+                    <tr>
+                        <td style="min-width: 150px;">@dimension.DisplayName</td>
+                        <td><input name="quantity" type="text" size="3" /></td>
+                        <td>
+                            <a class="btn btn-primary" href="@Url.Action(action: "InvokeMeter")">Submit</a>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+
+
+
+
 
         }
-    }
-    </tbody>
-</table>
+    </div>
+
+}

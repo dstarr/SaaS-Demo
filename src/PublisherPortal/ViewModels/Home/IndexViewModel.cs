@@ -5,5 +5,7 @@ namespace PublisherPortal.ViewModels.Home;
 
 public class IndexViewModel
 {
-    public IList<Subscription> Subscriptions { get; internal set; }
+    public Subscription Subscription { get; internal set; }
+    public bool HasMeters { get; internal set; }
 }
+

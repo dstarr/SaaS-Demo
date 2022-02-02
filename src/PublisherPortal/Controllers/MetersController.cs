@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Marketplace.Metering;
 using Microsoft.Marketplace.SaaS;
 using Microsoft.Marketplace.SaaS.Models;
+using PublisherPortal.Controllers.ParameterModels;
 using PublisherPortal.ViewModels.Meters;
 
 namespace PublisherPortal.Controllers;
@@ -42,6 +43,21 @@ public class MetersController : Controller
         {
             Plans = plans.Plans,
             Subscription = subscription
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [Route("Subscription/{id}")]
+    public async Task<IActionResult> InvokeMeterAsync(Guid id, [Bind] InvokeMeterParameter parameters, CancellationToken cancellationToken)
+    {
+        var viewModel = new InvokedMeterViewModel()
+        {
+            DimensionId = parameters.DimensionId,
+            PlanId = parameters.PlanId,
+            Quantity = parameters.Quantity,
+            SubscriptionId = parameters.Id
         };
 
         return View(viewModel);
