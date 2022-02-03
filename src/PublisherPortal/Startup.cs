@@ -54,8 +54,8 @@ public class Startup
             options.Filters.Add(new AuthorizeFilter(policy));
         });
 
-        this.ConfigureMarketplaceFulfillmentService(services);
-
+        this.ConfigureMarketplaceServices(services);
+        
         services.AddRazorPages()
             .AddMicrosoftIdentityUI().AddMvcOptions(options => {});
             
@@ -106,7 +106,7 @@ public class Startup
         });
     }
 
-    private void ConfigureMarketplaceFulfillmentService(IServiceCollection services)
+    private void ConfigureMarketplaceServices(IServiceCollection services)
     {
         // get needed arguments from the Configuration in appsettings.json
         // or in the configuration settings in the Web Application
@@ -117,16 +117,9 @@ public class Startup
         // get standard Azure creds
         var creds = new ClientSecretCredential(tenantId, clientId, clientSecret);
 
-        // register a MarketplaceSaaaSClient so it can be injected
-        services.TryAddScoped<IMarketplaceSaaSClient>(sp =>
-        {
-            // ReSharper disable once ConvertToLambdaExpression
-            return new MarketplaceSaaSClient(creds);
-        });
+        services.TryAddScoped<IMarketplaceMeteringClient>(sp => new MarketplaceMeteringClient(creds));
 
-        services.TryAddScoped<IMarketplaceMeteringClient>(sp =>
-        {
-            return new MarketplaceMeteringClient(creds);
-        });
+        services.TryAddScoped<IMarketplaceSaaSClient>(sp => new MarketplaceSaaSClient(creds));
+
     }
 }
