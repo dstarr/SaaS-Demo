@@ -20,9 +20,9 @@
 
         @foreach (var dimension in plan.PlanComponents.MeteringDimensions)
         {
-            <form method="post">
+            <form method="post" asp-controller="Meters" asp-action="InvokeMeter">
 
-                <input type="hidden" name="id" value="@Model.Subscription.Id" />
+                <input type="hidden" name="subscriptionId" value="@Model.Subscription.Id" />
                 <input type="hidden" name="planId" value="@plan.PlanId" />
                 <input type="hidden" name="dimensionId" value="@dimension.Id" />
 
@@ -31,7 +31,7 @@
                         <td style="min-width: 150px;">@dimension.DisplayName</td>
                         <td><input name="quantity" type="text" size="3" /></td>
                         <td>
-                            <a class="btn btn-primary" href="@Url.Action(action: "InvokeMeter")">Submit</a>
+                            <input class="btn btn-info" type="submit" value="Submit"/>
                         </td>
                     </tr>
                 </table>

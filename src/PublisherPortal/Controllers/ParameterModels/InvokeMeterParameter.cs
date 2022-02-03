@@ -6,7 +6,7 @@ namespace PublisherPortal.Controllers.ParameterModels
 {
     public class InvokeMeterParameter
     {
-        public Guid Id { get; set; }
+        public Guid SubscriptionId { get; set; }
 
         public string PlanId { get; set; }
 

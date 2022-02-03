@@ -1,9 +1,10 @@
-﻿@model PublisherPortal.ViewModels.Meters.InvokedMeterViewModel
+﻿@model PublisherPortal.ViewModels.Meters.InvokeMeterViewModel
 
-@{
-    ViewBag.Title = "title";
-}
+<h1>Meter Invoked</h1>
 
-<h2>title</h2>
-
-Got it
+<table>
+    <tr><td>Subscription Id</td><td>@Model!.SubscriptionId.ToString()</td></tr>
+    <tr><td>Dimension Id</td><td>@Model!.DimensionId</td></tr>
+    <tr><td>Plan Id</td><td>@Model!.PlanId</td></tr>
+    <tr><td>Quantity</td><td>@Model!.Quantity</td></tr>
+</table>

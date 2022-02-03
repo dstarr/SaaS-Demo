@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Marketplace.Metering;
+using Microsoft.Marketplace.Metering.Models;
 using Microsoft.Marketplace.SaaS;
 using Microsoft.Marketplace.SaaS.Models;
 using PublisherPortal.Controllers.ParameterModels;
@@ -49,16 +50,31 @@ public class MetersController : Controller
     }
 
     [HttpPost]
-    [Route("Subscription/{id}")]
-    public async Task<IActionResult> InvokeMeterAsync(Guid id, [Bind] InvokeMeterParameter parameters, CancellationToken cancellationToken)
+    public async Task<IActionResult> InvokeMeterAsync([Bind] InvokeMeterParameter parameters, CancellationToken cancellationToken)
     {
-        var viewModel = new InvokedMeterViewModel()
+        UsageEvent usageEvent = new UsageEvent()
         {
-            DimensionId = parameters.DimensionId,
             PlanId = parameters.PlanId,
+            ResourceId = parameters.SubscriptionId,
             Quantity = parameters.Quantity,
-            SubscriptionId = parameters.Id
+            Dimension = parameters.DimensionId,
+            EffectiveStartTime = DateTimeOffset.Now.UtcDateTime,
         };
+        
+        _logger.Log(LogLevel.Information, "");
+        var result = (await _meteringClient.Metering.PostUsageEventAsync(usageEvent, cancellationToken: cancellationToken)).Value;
+
+        var viewModel = new InvokeMeterViewModel()
+        {
+            DimensionId = result.Dimension,
+            PlanId = result.PlanId,
+            Quantity = result.Quantity,
+            SubscriptionId = result.ResourceId,
+            ResultStatus = result.Status,
+
+        };
+
+
 
         return View(viewModel);
     }
