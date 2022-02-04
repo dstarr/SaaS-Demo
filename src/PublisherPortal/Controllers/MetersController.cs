@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -61,18 +62,40 @@ public class MetersController : Controller
             EffectiveStartTime = DateTimeOffset.Now.UtcDateTime,
         };
         
-        _logger.Log(LogLevel.Information, "");
-        var result = (await _meteringClient.Metering.PostUsageEventAsync(usageEvent, cancellationToken: cancellationToken)).Value;
+        _logger.Log(LogLevel.Information, "Invoking meter");
 
-        var viewModel = new InvokeMeterViewModel()
+        UsageEventOkResponse result;
+        
+
+        try
         {
-            DimensionId = result.Dimension,
-            PlanId = result.PlanId,
-            Quantity = result.Quantity,
-            SubscriptionId = result.ResourceId,
-            ResultStatus = result.Status,
 
-        };
+            result =
+                (await _meteringClient.Metering.PostUsageEventAsync(usageEvent, cancellationToken: cancellationToken))
+                .Value;
+
+            var viewModel = new InvokeMeterViewModel()
+            {
+                DimensionId = result.Dimension,
+                PlanId = result.PlanId,
+                Quantity = result.Quantity,
+                SubscriptionId = result.ResourceId,
+                ResultStatus = result.Status,
+            };
+        }
+        catch (RequestFailedException exception)
+        {
+            var viewModel = new InvokeMeterViewModel()
+            {
+                DimensionId = result.Dimension,
+                PlanId = result.PlanId,
+                Quantity = result.Quantity,
+                SubscriptionId = result.ResourceId,
+                ResultStatus = result.Status,
+            };
+        }
+
+
 
 
 
