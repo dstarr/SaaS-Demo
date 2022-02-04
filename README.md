@@ -1,5 +1,5 @@
 # SaaS-Demo
 
-This is a simple, but complete, landing page for a Microsoft Azure Marketplace SaaS offer.
+This is a simple but complete solution for a Microsoft Azure Marketplace SaaS offer.
 
-This code exists to show exercising the client library used.
+This demo code is for use in the **Building Your Own SaaS Solution Workshop**
