@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "090bac13-f8e2-4350-acfa-8ecbb0686dd5",
+		"_postman_id": "68bc1de2-5723-49f1-aadb-cf677c1cb916",
 		"name": "MCM APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -116,7 +116,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"planId\": \"silver\"\n}"
+							"raw": "{\n  \"planId\": \"gold\"\n}"
 						},
 						"url": {
 							"raw": "https://marketplaceapi.microsoft.com/api/saas/subscriptions/{{subscriptionId}}/activate?api-version={{apiVersion}}",
@@ -430,19 +430,21 @@
 			]
 		},
 		{
-			"name": "Metering",
+			"name": "SaaS Metering",
 			"item": [
 				{
-					"name": "Post usage event with resourceId",
+					"name": "Post a single usage event",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
 								"exec": [
 									"var now = new Date();\r",
-									"now.setHours(now.getHours() - 2);\r",
+									"var hourOffset = 1;\r",
+									"now.setHours(now.getHours() - hourOffset);\r",
+									"pm.environment.set(\"utcNowMinus2Hrs\", now.toISOString());\r",
 									"\r",
-									"pm.collectionVariables.set(\"utcNowMinus2Hrs\", now.toISOString());"
+									"console.log(pm.environment.get(\"utcNowMinus2Hrs\"));"
 								],
 								"type": "text/javascript"
 							}
@@ -452,26 +454,21 @@
 						"method": "POST",
 						"header": [
 							{
-								"description": "A unique string value for tracking the request from the client, preferably a GUID. If this value isn't provided, one will be generated and provided in the response headers.",
-								"key": "x-ms-requestid",
-								"value": "<uuid>"
-							},
-							{
-								"description": "A unique string value for operation on the client. This parameter correlates all events from client operation with events on the server side. If this value isn't provided, one will be generated and provided in the response headers.",
-								"key": "x-ms-correlationid",
-								"value": "<uuid>"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"resourceId\": \"ab8923e0-9ac5-b203-7fac-e23fb89de995\",\n  \"quantity\": 15.5,\n  \"dimension\": \"dim3\",\n  \"effectiveStartTime\": \"{{utcNowMinus2Hrs}}\",\n  \"planId\": \"gold\"\n}"
+							"raw": "{\n    \"resourceId\": \"{{subscriptionId}}\",\n    \"quantity\": 100,\n    \"dimension\": \"scan_1_page\",\n    \"effectiveStartTime\": \"{{utcNowMinus2Hrs}}\",\n    \"planId\": \"ec-saas-demo-platinum\"\n}"
 						},
 						"url": {
-							"raw": "https://marketplaceapi.microsoft.com/api/usageEvent?api-version=2018-08-31",
+							"raw": "https://marketplaceapi.microsoft.com/api/usageEvent?api-version={{apiVersion}}",
 							"protocol": "https",
 							"host": [
 								"marketplaceapi",
@@ -485,9 +482,62 @@
 							"query": [
 								{
 									"key": "api-version",
-									"value": "2018-08-31",
+									"value": "{{apiVersion}}",
 									"description": "(Required) Version of the API."
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get plan-a single usage event",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var now = new Date();\r",
+									"now.setHours(now.getHours() - 4);\r",
+									"pm.environment.set(\"utcNowMinus2Hrs\", now.toISOString());\r",
+									"\r",
+									"console.log(pm.environment.get(\"utcNowMinus2Hrs\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"resourceId\": \"{{subscriptionId}}\",\n    \"quantity\": 100,\n    \"dimension\": \"scan-1-page-01\",\n    \"effectiveStartTime\": \"{{utcNowMinus2Hrs}}\",\n    \"planId\": \"plan-a\"\n}"
+						},
+						"url": {
+							"raw": "https://marketplaceapi.microsoft.com/api/usageEvent",
+							"protocol": "https",
+							"host": [
+								"marketplaceapi",
+								"microsoft",
+								"com"
+							],
+							"path": [
+								"api",
+								"usageEvent"
 							]
 						}
 					},
@@ -503,7 +553,7 @@
 									"var now = new Date();\r",
 									"now.setHours(now.getHours() - 2);\r",
 									"\r",
-									"pm.collectionVariables.set(\"utcNowMinus2Hrs\", now.toISOString());"
+									"pm.environment.set(\"utcNowMinus2Hrs\", now.toISOString());"
 								],
 								"type": "text/javascript"
 							}
@@ -757,7 +807,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"effectiveStartTime\": \"{{utcNowMinus2Hrs}}\",\r\n    \"quantity\":  15,\r\n    \"resourceUri\":  \"/subscriptions/bf7adf12-c3a8-426c-9976-29f145eba70f/resourceGroups/ercmngd/providers/Microsoft.Solutions/applications/ercmdngd2231\",\r\n    \"dimension\":  \"dim1\",\r\n    \"planId\":  \"userassigned\"\r\n}",
+							"raw": "{\r\n    \"effectiveStartTime\": \"{{utcNowMinus2Hrs}}\",\r\n    \"quantity\": 15,\r\n    \"resourceUri\": \"/subscriptions/bf7adf12-c3a8-426c-9976-29f145eba70f/resourceGroups/ercmngd/providers/Microsoft.Solutions/applications/ercmdngd2231\",\r\n    \"dimension\": \"dim1\",\r\n    \"planId\": \"userassigned\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -804,22 +854,28 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlNzWnNCTmhaY0YzUTlTNHRycFFCVEJ5TlJSSSIsImtpZCI6IlNzWnNCTmhaY0YzUTlTNHRycFFCVEJ5TlJSSSJ9.eyJhdWQiOiI1ZjA2ZjBhNS1hODA0LTRmODAtYTZkYS00YzA3ZjQzN2YxYWUiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC82ZWJiODY5YS1mMmZjLTQ1NWYtYjNjMy1jODIxNzNkNTU2ZWEvIiwiaWF0IjoxNTkxNjM3NjM3LCJuYmYiOjE1OTE2Mzc2MzcsImV4cCI6MTU5MTcyNDMzNywiYWlvIjoiNDJkZ1lQaVE0ZmhSVzJtM0RHdWZ6YlMyMHp2MkFRQT0iLCJhcHBpZCI6IjIwZTk0MGIzLTRjNzctNGIwYi05YTUzLTllMTZhMWIwMTBhNyIsImFwcGlkYWNyIjoiMiIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzZlYmI4NjlhLWYyZmMtNDU1Zi1iM2MzLWM4MjE3M2Q1NTZlYS8iLCJvaWQiOiIwY2E0OGMwNS1hMmU3LTQ1N2UtODRiMi1mNTMxMzdjNmQ2YmEiLCJyaCI6IjAuQVRZQW1vYTdidnp5WDBXenc4Z2hjOVZXNnJOQTZTQjNUQXRMbWxPZUZxR3dFS2MyQUFBLiIsInN1YiI6IjBjYTQ4YzA1LWEyZTctNDU3ZS04NGIyLWY1MzEzN2M2ZDZiYSIsInRpZCI6IjZlYmI4NjlhLWYyZmMtNDU1Zi1iM2MzLWM4MjE3M2Q1NTZlYSIsInV0aSI6IjY3REY4Y2VnaFV5bzNWQjRuakZoQUEiLCJ2ZXIiOiIxLjAifQ.hquDKndOyuyUAVnS5DtxHfsqObGIXOnk6gZOJQSSwlO5GvNm2WoYi8eNJV6Q1ltJamQWPbKhiIA3gntYGT4SRhFzdCAEW28GpFaRMACA8lzZI1vuVNixZVxnBFM2wIjpmk6otsuxblaACNrs7DqvPqHNDsUhOIzZrN7s_FrcrYa8RRIIORTAxQe-Af10X7v9AN_oC0wpIcS7c3t4vH5xm-wyfURCwrgiPBdv72BG2uOSVVHVv1xwZ62WVgGDaq5jCF09jlJ53XJDJLqJsoDBm24FRjNTYfXHMe8fVGTo9dh7JrT1vvUn7b-QrEKjShWTYqb2GV2PmPxyA05he003xQ",
+								"value": "Bearer {{accessToken}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"id\":\"482986a3-5885-49a7-bc24-0fe4fbe1adfb\",\n\t\"activityId\":\"0ad21a52-1604-4db3-a2cc-29c58fda0884\",\n\t\"publisherId\":\"testtestindustryexperiencestest\",\n\t\"offerId\":\"contoso_saas_offer-preview\",\n\t\"planId\":\"base\",\n\t\"quantity\":1,\n\t\"subscriptionId\":\"{{subscriptionId}}\",\n\t\"timeStamp\":\"2020-06-08T20:12:07.9658094Z\",\n\t\"action\":\"Unsubscribe\",\n\t\"status\":\"Succeeded\",\n\t\"operationRequestSource\":\"Azure\",\n\t\"subscription\":null\n}"
+							"raw": "{\n  \"id\": \"bd104ff5-5f17-4a44-8459-9199b32df64b\",\n  \"activityId\": \"a32fdf02-bd4e-4796-b64b-936aec7cd10d\",\n  \"publisherId\": \"elegantcodecom1583941477217\",\n  \"offerId\": \"ec-saas-demo-preview\",\n  \"planId\": \"ec-saas-demo-gold\",\n  \"quantity\": 1,\n  \"subscriptionId\": \"ee7f24cf-4c42-49df-c652-81619bba9c6c\",\n  \"timeStamp\": \"2021-10-11T00:04:02.3974625Z\",\n  \"action\": \"Unsubscribe\",\n  \"status\": \"Succeeded\",\n  \"operationRequestSource\": \"Azure\",\n  \"subscription\": {\n    \"id\": \"ee7f24cf-4c42-49df-c652-81619bba9c6c\",\n    \"publisherId\": \"elegantcodecom1583941477217\",\n    \"offerId\": \"ec-saas-demo-preview\",\n    \"name\": \"saasdemo4\",\n    \"saasSubscriptionStatus\": \"Unsubscribed\",\n    \"beneficiary\": {\n      \"emailId\": \"dastarr@microsoft.com\",\n      \"objectId\": \"dc737d94-818b-466d-936e-41b5620fd35a\",\n      \"tenantId\": \"e6c97eb2-054c-4b5d-9a30-a064766a9e83\",\n      \"puid\": \"10033FFFA978BA17\",\n      \"groupIds\": null,\n      \"iss\": null,\n      \"idp\": null,\n      \"altsecid\": null,\n      \"CLIENT-IP\": null\n    },\n    \"purchaser\": {\n      \"emailId\": \"dastarr@microsoft.com\",\n      \"objectId\": \"dc737d94-818b-466d-936e-41b5620fd35a\",\n      \"tenantId\": \"e6c97eb2-054c-4b5d-9a30-a064766a9e83\",\n      \"puid\": \"10033FFFA978BA17\",\n      \"groupIds\": null,\n      \"iss\": null,\n      \"idp\": null,\n      \"altsecid\": null,\n      \"CLIENT-IP\": null\n    },\n    \"planId\": \"ec-saas-demo-gold\",\n    \"term\": {\n      \"startDate\": \"2021-10-06T00:00:00Z\",\n      \"endDate\": \"2021-11-05T00:00:00Z\",\n      \"termUnit\": \"P1M\",\n      \"chargeDuration\": null\n    },\n    \"autoRenew\": false,\n    \"isTest\": false,\n    \"isFreeTrial\": false,\n    \"allowedCustomerOperations\": [\n      \"Delete\",\n      \"Update\",\n      \"Read\"\n    ],\n    \"sessionId\": null,\n    \"fulfillmentId\": null,\n    \"legacySubscriptionId\": null,\n    \"sandboxType\": \"None\",\n    \"created\": \"2021-10-06T19:01:05.8649252Z\",\n    \"lastModified\": \"0001-01-01T00:00:00\",\n    \"isBlending\": null,\n    \"tags\": null,\n    \"quantity\": null,\n    \"sessionMode\": \"None\"\n  },\n  \"purchaseToken\": null\n}"
 						},
 						"url": {
-							"raw": "{{webhookHost}}/api/webhook",
+							"raw": "{{webhookHost}}/api/Webhook?top_secret=9b18c5b7-5f99-4e2d-9c11-edf20cbeeb4c",
 							"host": [
 								"{{webhookHost}}"
 							],
 							"path": [
 								"api",
-								"webhook"
+								"Webhook"
+							],
+							"query": [
+								{
+									"key": "top_secret",
+									"value": "9b18c5b7-5f99-4e2d-9c11-edf20cbeeb4c"
+								}
 							]
 						}
 					},
@@ -834,47 +890,31 @@
 								"key": "Content-Type",
 								"value": "application/json",
 								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n     \"subscriptionId\": \"{{subscriptionId}}\",\r\n     \"operationType\": \"ChangePlan\" \r\n}\r\n"
+							"raw": "{\r\n    \"id\": \"51b4f69f-8bc4-4b76-9bc8-ab0b99930a35\",\r\n    \"activityId\": \"81c43547-3525-44d9-bdb2-c62dfc8b4777\",\r\n    \"publisherId\": \"elegantcodecom1583941477217\",\r\n    \"offerId\": \"ec-saas-demo-preview\",\r\n    \"planId\": \"ec-saas-demo-gold\",\r\n    \"quantity\": 1,\r\n    \"subscriptionId\": \"ae2559cc-4bb5-4dd8-dbf6-d68be7bedd88\",\r\n    \"timeStamp\": \"2021-10-28T16:57:21.3061903Z\",\r\n    \"action\": \"ChangePlan\",\r\n    \"status\": \"InProgress\",\r\n    \"operationRequestSource\": \"Azure\",\r\n    \"subscription\": {\r\n        \"id\": \"ae2559cc-4bb5-4dd8-dbf6-d68be7bedd88\",\r\n        \"publisherId\": \"elegantcodecom1583941477217\",\r\n        \"offerId\": \"ec-saas-demo-preview\",\r\n        \"name\": \"ssasdemo14\",\r\n        \"saasSubscriptionStatus\": \"Subscribed\",\r\n        \"beneficiary\": {\r\n            \"emailId\": \"dastarr@microsoft.com\",\r\n            \"objectId\": \"dc737d94-818b-466d-936e-41b5620fd35a\",\r\n            \"tenantId\": \"e6c97eb2-054c-4b5d-9a30-a064766a9e83\",\r\n            \"puid\": \"10033FFFA978BA17\",\r\n            \"groupIds\": null,\r\n            \"iss\": null,\r\n            \"idp\": null,\r\n            \"altsecid\": null,\r\n            \"CLIENT-IP\": null\r\n        },\r\n        \"purchaser\": {\r\n            \"emailId\": \"dastarr@microsoft.com\",\r\n            \"objectId\": \"dc737d94-818b-466d-936e-41b5620fd35a\",\r\n            \"tenantId\": \"e6c97eb2-054c-4b5d-9a30-a064766a9e83\",\r\n            \"puid\": \"10033FFFA978BA17\",\r\n            \"groupIds\": null,\r\n            \"iss\": null,\r\n            \"idp\": null,\r\n            \"altsecid\": null,\r\n            \"CLIENT-IP\": null\r\n        },\r\n        \"planId\": \"ec-saas-demo-silver\",\r\n        \"term\": {\r\n            \"startDate\": \"2021-10-20T00:00:00Z\",\r\n            \"endDate\": \"2021-11-19T00:00:00Z\",\r\n            \"termUnit\": \"P1M\",\r\n            \"chargeDuration\": null\r\n        },\r\n        \"autoRenew\": true,\r\n        \"isTest\": false,\r\n        \"isFreeTrial\": false,\r\n        \"allowedCustomerOperations\": [\r\n            \"Delete\",\r\n            \"Update\",\r\n            \"Read\"\r\n        ],\r\n        \"sessionId\": null,\r\n        \"fulfillmentId\": null,\r\n        \"legacySubscriptionId\": null,\r\n        \"sandboxType\": \"None\",\r\n        \"created\": \"2021-10-19T22:56:22.8157297Z\",\r\n        \"lastModified\": \"0001-01-01T00:00:00\",\r\n        \"isBlending\": null,\r\n        \"tags\": null,\r\n        \"quantity\": null,\r\n        \"sessionMode\": \"None\"\r\n    },\r\n    \"purchaseToken\": null\r\n}"
 						},
 						"url": {
-							"raw": "{{webhookHost}}/api/webhook",
+							"raw": "{{webhookHost}}/api/webhook?top_secret=9b18c5b7-5f99-4e2d-9c11-edf20cbeeb4c",
 							"host": [
 								"{{webhookHost}}"
 							],
 							"path": [
 								"api",
 								"webhook"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Test Request 2",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Elegant Code\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							],
+							"query": [
+								{
+									"key": "top_secret",
+									"value": "9b18c5b7-5f99-4e2d-9c11-edf20cbeeb4c"
 								}
-							}
-						},
-						"url": {
-							"raw": "{{webhookHost}}/api/webhook",
-							"host": [
-								"{{webhookHost}}"
-							],
-							"path": [
-								"api",
-								"webhook"
 							]
 						}
 					},
@@ -920,7 +960,7 @@
 					"response": []
 				},
 				{
-					"name": "Get outstanding subscription operations",
+					"name": "Get operations for a subscription",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -956,7 +996,7 @@
 					"response": []
 				},
 				{
-					"name": "Get operation status",
+					"name": "Get an operation",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -967,7 +1007,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://marketplaceapi.microsoft.com/api/saas/subscriptions/{{subscriptionId}}/operations/4756010e-aabb-4bf2-b813-6573c6263aa3?api-version={{apiVersion}}",
+							"raw": "https://marketplaceapi.microsoft.com/api/saas/subscriptions/{{subscriptionId}}/operations/e8a60dda-7836-4757-b1d7-34d74ec66c0e?api-version={{apiVersion}}",
 							"protocol": "https",
 							"host": [
 								"marketplaceapi",
@@ -980,7 +1020,7 @@
 								"subscriptions",
 								"{{subscriptionId}}",
 								"operations",
-								"4756010e-aabb-4bf2-b813-6573c6263aa3"
+								"e8a60dda-7836-4757-b1d7-34d74ec66c0e"
 							],
 							"query": [
 								{
@@ -993,7 +1033,7 @@
 					"response": []
 				},
 				{
-					"name": "Update operation status",
+					"name": "Update operation - Succeeded",
 					"request": {
 						"method": "PATCH",
 						"header": [
@@ -1013,7 +1053,7 @@
 							}
 						},
 						"url": {
-							"raw": "https://marketplaceapi.microsoft.com/api/saas/subscriptions/{{subscriptionId}}/operations/4756010e-aabb-4bf2-b813-6573c6263aa3?api-version={{apiVersion}}",
+							"raw": "https://marketplaceapi.microsoft.com/api/saas/subscriptions/{{subscriptionId}}/operations/e8a60dda-7836-4757-b1d7-34d74ec66c0e?api-version={{apiVersion}}",
 							"protocol": "https",
 							"host": [
 								"marketplaceapi",
@@ -1026,7 +1066,7 @@
 								"subscriptions",
 								"{{subscriptionId}}",
 								"operations",
-								"4756010e-aabb-4bf2-b813-6573c6263aa3"
+								"e8a60dda-7836-4757-b1d7-34d74ec66c0e"
 							],
 							"query": [
 								{
@@ -1037,443 +1077,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Update the status of an operation",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"planId\": \"<string>\",\n    \"quantity\": \"<long>\",\n    \"status\": \"<string>\"\n}"
-						},
-						"url": {
-							"raw": "https://marketplaceapi.microsoft.com/api/saas/subscriptions/{{subscriptionId}}/operations/{{operationId}}?api-version={{apiVersion}}",
-							"protocol": "https",
-							"host": [
-								"marketplaceapi",
-								"microsoft",
-								"com"
-							],
-							"path": [
-								"api",
-								"saas",
-								"subscriptions",
-								"{{subscriptionId}}",
-								"operations",
-								"{{operationId}}"
-							],
-							"query": [
-								{
-									"key": "api-version",
-									"value": "{{apiVersion}}",
-									"description": "(Required) Version of the API."
-								}
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "Internal server error.",
-							"originalRequest": {
-								"method": "PATCH",
-								"header": [
-									{
-										"description": "Added as a part of security scheme: oauth2",
-										"key": "Authorization",
-										"value": "<token>"
-									},
-									{
-										"description": "A unique string value for tracking the request from the client, preferably a GUID. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-requestid",
-										"value": "<uuid>"
-									},
-									{
-										"description": "A unique string value for operation on the client. This parameter correlates all events from client operation with events on the server side. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-correlationid",
-										"value": "<uuid>"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"planId\": \"<string>\",\n    \"quantity\": \"<long>\",\n    \"status\": \"<string>\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/saas/subscriptions/:subscriptionId/operations/:operationId?api-version=2018-08-31",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"saas",
-										"subscriptions",
-										":subscriptionId",
-										"operations",
-										":operationId"
-									],
-									"query": [
-										{
-											"key": "api-version",
-											"value": "2018-08-31"
-										}
-									],
-									"variable": [
-										{
-											"key": "subscriptionId"
-										},
-										{
-											"key": "operationId"
-										}
-									]
-								}
-							},
-							"status": "Internal Server Error",
-							"code": 500,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "Not found.",
-							"originalRequest": {
-								"method": "PATCH",
-								"header": [
-									{
-										"description": "Added as a part of security scheme: oauth2",
-										"key": "Authorization",
-										"value": "<token>"
-									},
-									{
-										"description": "A unique string value for tracking the request from the client, preferably a GUID. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-requestid",
-										"value": "<uuid>"
-									},
-									{
-										"description": "A unique string value for operation on the client. This parameter correlates all events from client operation with events on the server side. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-correlationid",
-										"value": "<uuid>"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"planId\": \"<string>\",\n    \"quantity\": \"<long>\",\n    \"status\": \"<string>\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/saas/subscriptions/:subscriptionId/operations/:operationId?api-version=2018-08-31",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"saas",
-										"subscriptions",
-										":subscriptionId",
-										"operations",
-										":operationId"
-									],
-									"query": [
-										{
-											"key": "api-version",
-											"value": "2018-08-31"
-										}
-									],
-									"variable": [
-										{
-											"key": "subscriptionId"
-										},
-										{
-											"key": "operationId"
-										}
-									]
-								}
-							},
-							"status": "Not Found",
-							"code": 404,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "Conflict. For example, a newer transaction is already fulfilled.",
-							"originalRequest": {
-								"method": "PATCH",
-								"header": [
-									{
-										"description": "Added as a part of security scheme: oauth2",
-										"key": "Authorization",
-										"value": "<token>"
-									},
-									{
-										"description": "A unique string value for tracking the request from the client, preferably a GUID. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-requestid",
-										"value": "<uuid>"
-									},
-									{
-										"description": "A unique string value for operation on the client. This parameter correlates all events from client operation with events on the server side. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-correlationid",
-										"value": "<uuid>"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"planId\": \"<string>\",\n    \"quantity\": \"<long>\",\n    \"status\": \"<string>\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/saas/subscriptions/:subscriptionId/operations/:operationId?api-version=2018-08-31",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"saas",
-										"subscriptions",
-										":subscriptionId",
-										"operations",
-										":operationId"
-									],
-									"query": [
-										{
-											"key": "api-version",
-											"value": "2018-08-31"
-										}
-									],
-									"variable": [
-										{
-											"key": "subscriptionId"
-										},
-										{
-											"key": "operationId"
-										}
-									]
-								}
-							},
-							"status": "Conflict",
-							"code": 409,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "Unauthorized. The authentication token was not provided or is invalid, or the request is attempting to access an acquisition that does not belong to the current publisher.",
-							"originalRequest": {
-								"method": "PATCH",
-								"header": [
-									{
-										"description": "Added as a part of security scheme: oauth2",
-										"key": "Authorization",
-										"value": "<token>"
-									},
-									{
-										"description": "A unique string value for tracking the request from the client, preferably a GUID. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-requestid",
-										"value": "<uuid>"
-									},
-									{
-										"description": "A unique string value for operation on the client. This parameter correlates all events from client operation with events on the server side. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-correlationid",
-										"value": "<uuid>"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"planId\": \"<string>\",\n    \"quantity\": \"<long>\",\n    \"status\": \"<string>\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/saas/subscriptions/:subscriptionId/operations/:operationId?api-version=2018-08-31",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"saas",
-										"subscriptions",
-										":subscriptionId",
-										"operations",
-										":operationId"
-									],
-									"query": [
-										{
-											"key": "api-version",
-											"value": "2018-08-31"
-										}
-									],
-									"variable": [
-										{
-											"key": "subscriptionId"
-										},
-										{
-											"key": "operationId"
-										}
-									]
-								}
-							},
-							"status": "Forbidden",
-							"code": 403,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "A call to inform of completion of an operation on the partner side. For example, this response could signal the change of seats or plans.",
-							"originalRequest": {
-								"method": "PATCH",
-								"header": [
-									{
-										"description": "Added as a part of security scheme: oauth2",
-										"key": "Authorization",
-										"value": "<token>"
-									},
-									{
-										"description": "A unique string value for tracking the request from the client, preferably a GUID. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-requestid",
-										"value": "<uuid>"
-									},
-									{
-										"description": "A unique string value for operation on the client. This parameter correlates all events from client operation with events on the server side. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-correlationid",
-										"value": "<uuid>"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"planId\": \"<string>\",\n    \"quantity\": \"<long>\",\n    \"status\": \"<string>\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/saas/subscriptions/:subscriptionId/operations/:operationId?api-version=2018-08-31",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"saas",
-										"subscriptions",
-										":subscriptionId",
-										"operations",
-										":operationId"
-									],
-									"query": [
-										{
-											"key": "api-version",
-											"value": "2018-08-31"
-										}
-									],
-									"variable": [
-										{
-											"key": "subscriptionId"
-										},
-										{
-											"key": "operationId"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "Bad request; validation failures.",
-							"originalRequest": {
-								"method": "PATCH",
-								"header": [
-									{
-										"description": "Added as a part of security scheme: oauth2",
-										"key": "Authorization",
-										"value": "<token>"
-									},
-									{
-										"description": "A unique string value for tracking the request from the client, preferably a GUID. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-requestid",
-										"value": "<uuid>"
-									},
-									{
-										"description": "A unique string value for operation on the client. This parameter correlates all events from client operation with events on the server side. If this value isn't provided, one will be generated and provided in the response headers.",
-										"key": "x-ms-correlationid",
-										"value": "<uuid>"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"planId\": \"<string>\",\n    \"quantity\": \"<long>\",\n    \"status\": \"<string>\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/saas/subscriptions/:subscriptionId/operations/:operationId?api-version=2018-08-31",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"saas",
-										"subscriptions",
-										":subscriptionId",
-										"operations",
-										":operationId"
-									],
-									"query": [
-										{
-											"key": "api-version",
-											"value": "2018-08-31"
-										}
-									],
-									"variable": [
-										{
-											"key": "subscriptionId"
-										},
-										{
-											"key": "operationId"
-										}
-									]
-								}
-							},
-							"status": "Bad Request",
-							"code": 400,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						}
-					]
 				}
 			]
 		},
