@@ -60,7 +60,7 @@ namespace LandingPage.Controllers
             }
 
             // get graph current user data
-            var graphApiUser = await _graphServiceClient.Me.Request().GetAsync();
+            var graphApiUser = await _graphServiceClient.Me.Request().GetAsync(cancellationToken);
 
             // build the model
             var model = new IndexViewModel
